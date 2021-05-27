@@ -1,2 +1,2 @@
-# ChiaRebot
+# ChiaRobot
 这是一个专门为Chia挖矿而打造的自动化脚本工具，具有自动同步节点，自动P盘，自动集群SOLO的特点
