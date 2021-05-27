@@ -10,181 +10,75 @@ import javafx.scene.layout.GridPane;
 
 public class Controller implements Initializable {
     @FXML
-    private GridPane root_parent;
+    public GridPane GridPaneRootParent;
     @FXML
-    private Button btn_node_sync_by_user;
+    public Button buttonNodeSyncByUser;
     @FXML
-    private CheckBox cb_node_sync_by_auto;
+    public CheckBox checkBoxNodeSyncByAuto;
     @FXML
-    private TextField tf_normal_program_directory;
+    public TextField textFieldNormalProgramDirectory;
     @FXML
-    private Button btn_normal_change_program_directory;
+    public Button buttonNormalChangeProgramDirectory;
     @FXML
-    private TextField tf_normal_config_file_directory;
+    public TextField textFieldNormalConfigFileDirectory;
     @FXML
-    private TextField tf_normal_app_version_directory;
+    public TextField textFieldNormalAppVersionDirectory;
     @FXML
-    private Button btn_normal_change_config_file_directory;
+    public Button buttonNormalChangeConfigFileDirectory;
     @FXML
-    private Label lb_normal_current_calculation_power;
+    public Label labelNormalCurrentCalculationPower;
     @FXML
-    private Label lb_normal_current_price;
+    public Label labelNormalCurrentPrice;
     @FXML
-    private TextArea ta_node_log;
+    public TextArea textAreaNodeLog;
     @FXML
-    private Label lb_system_memory_current;
+    public Label labelSystemMemoryCurrent;
     @FXML
-    private Label lb_system_memory_total;
+    public Label labelSystemMemoryTotal;
     @FXML
-    private TextField tf_system_memory_value;
+    public TextField textFieldSystemMemoryValue;
     @FXML
-    private Slider slider_system_memory_change;
+    public Slider sliderSystemMemoryChange;
     @FXML
-    private TextField tf_system_thread_value;
+    public TextField textFieldSystemThreadValue;
     @FXML
-    private Slider slider_system_thread_change;
+    public Slider sliderSystemThreadChange;
     @FXML
-    private TextField tf_system_farmer_public_key;
+    public TextField textFieldSystemFarmerPublicKey;
     @FXML
-    private TextField tf_system_pool_public_key;
+    public TextField textFieldSystemPoolPublicKey;
     @FXML
-    private ChoiceBox cb_system_key;
+    public ChoiceBox choiceBoxSystemKey;
     @FXML
-    private Button btn_normal_start_p_task;
+    public Button buttonNormalStartPTask;
     @FXML
-    private Button btn_disk_cache_add;
+    public Button buttonDiskCacheAdd;
     @FXML
-    private Button btn_disk_cache_delete;
+    public Button buttonDiskCacheDelete;
     @FXML
-    private Button btn_disk_target_add;
+    public Button buttonDiskTargetAdd;
     @FXML
-    private Button btn_disk_target_delete;
+    public Button buttonDiskTargetDelete;
     @FXML
-    private Button btn_disk_cache_to_target;
+    public Button buttonDiskCacheToTarget;
     @FXML
-    private Button btn_disk_target_to_cache;
+    public Button buttonDiskTargetToCache;
     @FXML
-    private ListView lv_disk_directory_target;
+    public ListView listViewDiskDirectoryTarget;
     @FXML
-    private ListView lv_disk_directory_cache;
+    public ListView listViewDiskDirectoryCache;
+    @FXML
+    public Label labelDiskCacheSelect;
+    @FXML
+    public Label labelDiskTargetSelect;
+    @FXML
+    public Label labelDiskWaitQueue;
+    @FXML
+    public ListView listViewDiskWaitQueue;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
     }
-    public GridPane getRoot_parent() {
-        return root_parent;
-    }
 
-    public Button getBtn_node_sync_by_user() {
-        return btn_node_sync_by_user;
-    }
-
-    public CheckBox getCb_node_sync_by_auto() {
-        return cb_node_sync_by_auto;
-    }
-
-    public TextField getTf_normal_program_directory() {
-        return tf_normal_program_directory;
-    }
-
-    public Button getBtn_normal_change_program_directory() {
-        return btn_normal_change_program_directory;
-    }
-
-    public Label getLb_normal_current_calculation_power() {
-        return lb_normal_current_calculation_power;
-    }
-
-    public Label getLb_normal_current_price() {
-        return lb_normal_current_price;
-    }
-
-    public TextArea getTa_node_log() {
-        return ta_node_log;
-    }
-
-    public TextField getTf_normal_config_file_directory() {
-        return tf_normal_config_file_directory;
-    }
-
-    public Button getBtn_normal_change_config_file_directory() {
-        return btn_normal_change_config_file_directory;
-    }
-
-    public TextField getTf_normal_app_version_directory() {
-        return tf_normal_app_version_directory;
-    }
-
-    public Label getLb_system_memory_current() {
-        return lb_system_memory_current;
-    }
-
-    public Label getLb_system_memory_total() {
-        return lb_system_memory_total;
-    }
-
-    public TextField getTf_system_memory_value() {
-        return tf_system_memory_value;
-    }
-
-    public Slider getSlider_system_memory_change() {
-        return slider_system_memory_change;
-    }
-
-    public TextField getTf_system_thread_value() {
-        return tf_system_thread_value;
-    }
-
-    public Slider getSlider_system_thread_change() {
-        return slider_system_thread_change;
-    }
-
-    public TextField getTf_system_farmer_public_key() {
-        return tf_system_farmer_public_key;
-    }
-
-    public TextField getTf_system_pool_public_key() {
-        return tf_system_pool_public_key;
-    }
-
-    public ChoiceBox getCb_system_key() {
-        return cb_system_key;
-    }
-
-    public Button getBtn_normal_start_p_task() {
-        return btn_normal_start_p_task;
-    }
-
-    public Button getBtn_disk_cache_add() {
-        return btn_disk_cache_add;
-    }
-
-    public Button getBtn_disk_cache_delete() {
-        return btn_disk_cache_delete;
-    }
-
-    public Button getBtn_disk_target_add() {
-        return btn_disk_target_add;
-    }
-
-    public Button getBtn_disk_target_delete() {
-        return btn_disk_target_delete;
-    }
-
-    public Button getBtn_disk_cache_to_target() {
-        return btn_disk_cache_to_target;
-    }
-
-    public Button getBtn_disk_target_to_cache() {
-        return btn_disk_target_to_cache;
-    }
-
-    public ListView getLv_disk_directory_target() {
-        return lv_disk_directory_target;
-    }
-
-    public ListView getLv_disk_directory_cache() {
-        return lv_disk_directory_cache;
-    }
 }

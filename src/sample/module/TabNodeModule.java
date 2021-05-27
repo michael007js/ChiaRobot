@@ -38,14 +38,14 @@ public class TabNodeModule extends BaseTabModule implements EventHandler<ActionE
     @Override
     public void initialize(Controller mainController) {
         this.controller = mainController;
-        controller.getBtn_node_sync_by_user().setOnAction(this::handle);
-        controller.getCb_node_sync_by_auto().setOnAction(this::handle);
+        controller.buttonNodeSyncByUser.setOnAction(this::handle);
+        controller.checkBoxNodeSyncByAuto.setOnAction(this::handle);
     }
 
     @Override
     public void baseDirectorySettingChanged() {
         if (!AppConstant.functionEnable && isSyncNode) {
-            UIUtils.setTextAreaLog(controller.getTa_node_log(), true, "基础设置被改变且设置不正确，节点模块功能即将停止...");
+            UIUtils.setTextAreaLog(controller.textAreaNodeLog, true, "基础设置被改变且设置不正确，节点模块功能即将停止...");
             stopNodeSyncTimer(true);
         }
     }
@@ -57,27 +57,27 @@ public class TabNodeModule extends BaseTabModule implements EventHandler<ActionE
             return;
         }
 
-        if (event.getSource() == controller.getBtn_node_sync_by_user()) {
+        if (event.getSource() == controller.buttonNodeSyncByUser) {
             if (isSyncNode) {
                 stopNodeSyncTimer(true);
-                UIUtils.setText(controller.getBtn_node_sync_by_user(),  "停止中");
-                controller.getBtn_node_sync_by_user().setDisable(true);
-                controller.getCb_node_sync_by_auto().setDisable(true);
+                UIUtils.setText(controller.buttonNodeSyncByUser,  "停止中");
+                controller.buttonNodeSyncByUser.setDisable(true);
+                controller.checkBoxNodeSyncByAuto.setDisable(true);
             } else {
-                UIUtils.setText(controller.getBtn_node_sync_by_user(),  "结束同步");
+                UIUtils.setText(controller.buttonNodeSyncByUser,  "结束同步");
                 startNodeSyncTimer();
-                controller.getCb_node_sync_by_auto().setDisable(true);
+                controller.checkBoxNodeSyncByAuto.setDisable(true);
             }
 
-        } else if (event.getSource() == controller.getCb_node_sync_by_auto()) {
-            UIUtils.setText(controller.getBtn_node_sync_by_user(),  "开始同步");
+        } else if (event.getSource() == controller.checkBoxNodeSyncByAuto) {
+            UIUtils.setText(controller.buttonNodeSyncByUser,  "开始同步");
             if (isSyncNode) {
-                controller.getBtn_node_sync_by_user().setDisable(true);
-                controller.getCb_node_sync_by_auto().setSelected(false);
+                controller.buttonNodeSyncByUser.setDisable(true);
+                controller.checkBoxNodeSyncByAuto.setSelected(false);
                 stopNodeSyncTimer(true);
             } else {
-                controller.getBtn_node_sync_by_user().setDisable(true);
-                controller.getCb_node_sync_by_auto().setSelected(true);
+                controller.buttonNodeSyncByUser.setDisable(true);
+                controller.checkBoxNodeSyncByAuto.setSelected(true);
                 startNodeSyncTimer();
             }
 
@@ -92,7 +92,7 @@ public class TabNodeModule extends BaseTabModule implements EventHandler<ActionE
      */
     private void stopNodeSyncTimer(boolean showLog) {
         if (showLog) {
-            UIUtils.setTextAreaLog(controller.getTa_node_log(), true, "节点同步停止中...");
+            UIUtils.setTextAreaLog(controller.textAreaNodeLog, true, "节点同步停止中...");
         }
         isSyncNode = false;
         if (disposableObserver != null && !disposableObserver.isDisposed()) {
@@ -113,7 +113,7 @@ public class TabNodeModule extends BaseTabModule implements EventHandler<ActionE
                     @Override
                     protected void onStart() {
                         super.onStart();
-                        UIUtils.setTextAreaLog(controller.getTa_node_log(), true, false, "开始同步节点" + (controller.getCb_node_sync_by_auto().isSelected() ? "("+time+"分钟同步一轮)" : ""));
+                        UIUtils.setTextAreaLog(controller.textAreaNodeLog, true, false, "开始同步节点" + (controller.checkBoxNodeSyncByAuto.isSelected() ? "("+time+"分钟同步一轮)" : ""));
                         onNext(0L);
                     }
 
@@ -125,22 +125,22 @@ public class TabNodeModule extends BaseTabModule implements EventHandler<ActionE
                                 ChiaNodeBean chiaNodeBean=JsonUtils.formatToObject(success,ChiaNodeBean.class);
 
                                 if (chiaNodeBean.getNodes()!=null){
-                                    UIUtils.setTextAreaLog(controller.getTa_node_log(), true, "获取到" +chiaNodeBean.getNodes().size() + "个节点");
+                                    UIUtils.setTextAreaLog(controller.textAreaNodeLog, true, "获取到" +chiaNodeBean.getNodes().size() + "个节点");
                                     if ( chiaNodeBean.getNodes().size() > 0) {
-                                        UIUtils.setTextAreaLog(controller.getTa_node_log(), true, "正在同步节点中...");
+                                        UIUtils.setTextAreaLog(controller.textAreaNodeLog, true, "正在同步节点中...");
                                     }
                                     for (int i = 0; i < chiaNodeBean.getNodes().size(); i++) {
                                         if (!isSyncNode) {
                                             stopNodeSyncTimer(false);
                                             break;
                                         }
-                                        UIUtils.setTextAreaLog(controller.getTa_node_log(), false, MichaelUtils.runByCMD(AppConstant.CHIA_PROGRAM_DIRECTORY + "/" + AppConstant.CHIA_APP_VERSION_DIRECTORY_NAME + "/resources/app.asar.unpacked/daemon/chia.exe" + " show -a " + chiaNodeBean.getNodes().get(i).getIp() + ":"+chiaNodeBean.getNodes().get(i).getPort()));
+                                        UIUtils.setTextAreaLog(controller.textAreaNodeLog, false, MichaelUtils.runByCMD(AppConstant.CHIA_PROGRAM_DIRECTORY + "/" + AppConstant.CHIA_APP_VERSION_DIRECTORY_NAME + "/resources/app.asar.unpacked/daemon/chia.exe" + " show -a " + chiaNodeBean.getNodes().get(i).getIp() + ":"+chiaNodeBean.getNodes().get(i).getPort()));
                                     }
-                                    UIUtils.setTextAreaLog(controller.getTa_node_log(), true, "节点同步完成");
+                                    UIUtils.setTextAreaLog(controller.textAreaNodeLog, true, "节点同步完成");
                                     isSyncNode=false;
-                                    controller.getBtn_node_sync_by_user().setDisable(false);
-                                    controller.getCb_node_sync_by_auto().setDisable(false);
-                                    UIUtils.setText(controller.getBtn_node_sync_by_user(),  "开始同步");
+                                    controller.buttonNodeSyncByUser.setDisable(false);
+                                    controller.checkBoxNodeSyncByAuto.setDisable(false);
+                                    UIUtils.setText(controller.buttonNodeSyncByUser,  "开始同步");
                                 }
 
 
@@ -150,7 +150,7 @@ public class TabNodeModule extends BaseTabModule implements EventHandler<ActionE
 
                             @Override
                             public void fail(String fail) {
-                                UIUtils.setTextAreaLog(controller.getTa_node_log(), true, "同步节点失败" + fail);
+                                UIUtils.setTextAreaLog(controller.textAreaNodeLog, true, "同步节点失败" + fail);
                                 isSyncNode=false;
                             }
                         });
@@ -159,7 +159,7 @@ public class TabNodeModule extends BaseTabModule implements EventHandler<ActionE
 
                     @Override
                     public void onError(Throwable e) {
-                        UIUtils.setTextAreaLog(controller.getTa_node_log(), true, "同步节点失败" + e.getLocalizedMessage()); isSyncNode=false;
+                        UIUtils.setTextAreaLog(controller.textAreaNodeLog, true, "同步节点失败" + e.getLocalizedMessage()); isSyncNode=false;
                     }
 
                     @Override

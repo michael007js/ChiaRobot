@@ -39,15 +39,15 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
     @Override
     public void initialize(Controller mainController) {
         this.controller = mainController;
-        UIUtils.setText(controller.getLb_normal_current_calculation_power(), "全网算力:获取中...");
-        UIUtils.setText(controller.getLb_normal_current_price(), "当前价格:获取中...");
+        UIUtils.setText(controller.labelNormalCurrentCalculationPower, "全网算力:获取中...");
+        UIUtils.setText(controller.labelNormalCurrentPrice, "当前价格:获取中...");
         createCalculationPowerAndPriceTimer(false);
         statusInitChiaProgramDirectory = initChiaProgramDirectory(false, "C:/Users/" + System.getProperty("user.name") + "/AppData/Local/chia-blockchain");
         statusInitChiaConfigFileDirectory = initChiaConfigFileDirectory(false, "C:/Users/" + System.getProperty("user.name") + "/.chia");
         AppConstant.functionEnable = statusInitChiaProgramDirectory && statusInitChiaConfigFileDirectory;
-        controller.getBtn_normal_change_program_directory().setOnAction(this::handle);
-        controller.getBtn_normal_change_config_file_directory().setOnAction(this::handle);
-        controller.getBtn_normal_start_p_task().setOnAction(this::handle);
+        controller.buttonNormalChangeProgramDirectory.setOnAction(this::handle);
+        controller.buttonNormalChangeConfigFileDirectory.setOnAction(this::handle);
+        controller.buttonNormalStartPTask.setOnAction(this::handle);
     }
 
     @Override
@@ -57,21 +57,21 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
 
     @Override
     public void handle(ActionEvent event) {
-        if (event.getSource() == controller.getBtn_normal_change_program_directory()) {
+        if (event.getSource() == controller.buttonNormalChangeProgramDirectory) {
             String path = AlertUtils.showDirectory(AppConstant.CHIA_PROGRAM_DIRECTORY);
             if (!StringUtils.isEmpty(path)) {
                 statusInitChiaProgramDirectory = initChiaProgramDirectory(true, path);
                 AppConstant.functionEnable = statusInitChiaProgramDirectory && statusInitChiaConfigFileDirectory;
                 baseDirectorySettingChanged();
             }
-        } else if (event.getSource() == controller.getBtn_normal_change_config_file_directory()) {
+        } else if (event.getSource() == controller.buttonNormalChangeConfigFileDirectory) {
             String path = AlertUtils.showDirectory(AppConstant.CHIA_CONFIG_FILE_DIRECTORY);
             if (!StringUtils.isEmpty(path)) {
                 statusInitChiaConfigFileDirectory = initChiaConfigFileDirectory(true, path);
                 AppConstant.functionEnable = statusInitChiaProgramDirectory && statusInitChiaConfigFileDirectory;
                 baseDirectorySettingChanged();
             }
-        } else if (event.getSource() == controller.getBtn_normal_start_p_task()) {
+        } else if (event.getSource() == controller.buttonNormalStartPTask) {
 
         }
     }
@@ -91,12 +91,12 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
                 AlertUtils.showError("错误", "Chia程序目录未找到，请手动选择");
             }
             AppConstant.CHIA_PROGRAM_DIRECTORY = "";
-            UIUtils.setText(controller.getTf_normal_program_directory(), AppConstant.CHIA_PROGRAM_DIRECTORY);
+            UIUtils.setText(controller.textFieldNormalProgramDirectory, AppConstant.CHIA_PROGRAM_DIRECTORY);
             initChiaDirectoryName(byUser, AppConstant.CHIA_PROGRAM_DIRECTORY);
             return false;
         }
         AppConstant.CHIA_PROGRAM_DIRECTORY = file.getAbsolutePath();
-        UIUtils.setText(controller.getTf_normal_program_directory(), AppConstant.CHIA_PROGRAM_DIRECTORY);
+        UIUtils.setText(controller.textFieldNormalProgramDirectory, AppConstant.CHIA_PROGRAM_DIRECTORY);
         return initChiaDirectoryName(byUser, AppConstant.CHIA_PROGRAM_DIRECTORY);
     }
 
@@ -115,11 +115,11 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
                 AlertUtils.showError("错误", "Chia配置文件目录不正确，\n该路径一般为C:\\Users\\Administrator\\.chia");
             }
             AppConstant.CHIA_CONFIG_FILE_DIRECTORY = "";
-            UIUtils.setText(controller.getTf_normal_config_file_directory(), AppConstant.CHIA_CONFIG_FILE_DIRECTORY);
+            UIUtils.setText(controller.textFieldNormalConfigFileDirectory, AppConstant.CHIA_CONFIG_FILE_DIRECTORY);
             return false;
         }
         AppConstant.CHIA_CONFIG_FILE_DIRECTORY = file.getAbsolutePath();
-        UIUtils.setText(controller.getTf_normal_config_file_directory(), AppConstant.CHIA_CONFIG_FILE_DIRECTORY);
+        UIUtils.setText(controller.textFieldNormalConfigFileDirectory, AppConstant.CHIA_CONFIG_FILE_DIRECTORY);
         return true;
     }
 
@@ -147,7 +147,7 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
                 }
             });
             AppConstant.CHIA_APP_VERSION_DIRECTORY_NAME = appDirs.get(appDirs.size() - 1).getName();
-            UIUtils.setText(controller.getTf_normal_app_version_directory(), AppConstant.CHIA_APP_VERSION_DIRECTORY_NAME);
+            UIUtils.setText(controller.textFieldNormalAppVersionDirectory, AppConstant.CHIA_APP_VERSION_DIRECTORY_NAME);
             return true;
         } else {
             if (!byUser) {
@@ -157,7 +157,7 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
                 AlertUtils.showError("错误", "Chia APP版本目录名不正确，请确认Chia程序目录是否正确，\n该路径一般为C:\\Users\\Administrator\\AppData\\Local\\chia-blockchain");
             }
             AppConstant.CHIA_APP_VERSION_DIRECTORY_NAME = "";
-            UIUtils.setText(controller.getTf_normal_app_version_directory(), AppConstant.CHIA_APP_VERSION_DIRECTORY_NAME);
+            UIUtils.setText(controller.textFieldNormalAppVersionDirectory, AppConstant.CHIA_APP_VERSION_DIRECTORY_NAME);
             return false;
         }
 
@@ -217,15 +217,15 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
             public void success(String success) {
                 ChiaCalculationPowerBean chiaCalculationPowerBean = JsonUtils.formatToObject(success, ChiaCalculationPowerBean.class);
                 if (chiaCalculationPowerBean == null || chiaCalculationPowerBean.getData() == null || chiaCalculationPowerBean.getData().size() == 0) {
-                    UIUtils.setText(controller.getLb_normal_current_calculation_power(), "全网算力:获取失败");
+                    UIUtils.setText(controller.labelNormalCurrentCalculationPower, "全网算力:获取失败");
                 } else {
-                    UIUtils.setText(controller.getLb_normal_current_calculation_power(), "全网算力:" + StringUtils.double2String(chiaCalculationPowerBean.getData().get(chiaCalculationPowerBean.getData().size() - 1), 3) + "PiB");
+                    UIUtils.setText(controller.labelNormalCurrentCalculationPower, "全网算力:" + StringUtils.double2String(chiaCalculationPowerBean.getData().get(chiaCalculationPowerBean.getData().size() - 1), 3) + "PiB");
                 }
             }
 
             @Override
             public void fail(String fail) {
-                UIUtils.setText(controller.getLb_normal_current_price(), "全网算力:获取失败" + fail);
+                UIUtils.setText(controller.labelNormalCurrentPrice, "全网算力:获取失败" + fail);
             }
         });
         HttpService.getInstance().getByOkHttp(AppConstant.CHIA_PRICE_URL, new HttpCallBack() {
@@ -233,15 +233,15 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
             public void success(String success) {
                 ChiaCalculationPowerBean chiaCalculationPowerBean = JsonUtils.formatToObject(success, ChiaCalculationPowerBean.class);
                 if (chiaCalculationPowerBean == null || chiaCalculationPowerBean.getData() == null || chiaCalculationPowerBean.getData().size() == 0) {
-                    UIUtils.setText(controller.getLb_normal_current_price(), "当前价格:获取失败");
+                    UIUtils.setText(controller.labelNormalCurrentPrice, "当前价格:获取失败");
                 } else {
-                    UIUtils.setText(controller.getLb_normal_current_price(), "当前价格:$" + StringUtils.double2String(chiaCalculationPowerBean.getData().get(chiaCalculationPowerBean.getData().size() - 1), 2));
+                    UIUtils.setText(controller.labelNormalCurrentPrice, "当前价格:$" + StringUtils.double2String(chiaCalculationPowerBean.getData().get(chiaCalculationPowerBean.getData().size() - 1), 2));
                 }
             }
 
             @Override
             public void fail(String fail) {
-                UIUtils.setText(controller.getLb_normal_current_price(), "当前价格:获取失败" + fail);
+                UIUtils.setText(controller.labelNormalCurrentPrice, "当前价格:获取失败" + fail);
             }
         });
     }

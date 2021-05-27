@@ -32,18 +32,18 @@ public class TabSystemModule extends BaseTabModule {
     @Override
     public void initialize(Controller mainController) {
         this.controller = mainController;
-        controller.getSlider_system_memory_change().valueProperty().addListener(new ChangeListener<Number>() {
+        controller.sliderSystemMemoryChange.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 AppConstant.P_TASK_MEMORY = newValue.intValue();
-                UIUtils.setText(controller.getTf_system_memory_value(), AppConstant.P_TASK_MEMORY + "");
+                UIUtils.setText(controller.textFieldSystemMemoryValue, AppConstant.P_TASK_MEMORY + "");
             }
         });
-        controller.getSlider_system_thread_change().valueProperty().addListener(new ChangeListener<Number>() {
+        controller.sliderSystemThreadChange.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 AppConstant.P_TASK_THREAD = newValue.intValue();
-                UIUtils.setText(controller.getTf_system_thread_value(), AppConstant.P_TASK_THREAD + "");
+                UIUtils.setText(controller.textFieldSystemThreadValue, AppConstant.P_TASK_THREAD + "");
             }
         });
         startMemoryStatistics();
@@ -56,9 +56,9 @@ public class TabSystemModule extends BaseTabModule {
         if (AppConstant.functionEnable) {
             getKeys();
         } else {
-            UIUtils.setText(controller.getTf_system_farmer_public_key(), "");
-            UIUtils.setText(controller.getTf_system_pool_public_key(), "");
-            UIUtils.setData(keyAdapter, controller.getCb_system_key(), new ArrayList<>());
+            UIUtils.setText(controller.textFieldSystemFarmerPublicKey, "");
+            UIUtils.setText(controller.textFieldSystemPoolPublicKey, "");
+            UIUtils.setData(keyAdapter, controller.choiceBoxSystemKey, new ArrayList<>());
         }
 
     }
@@ -90,11 +90,11 @@ public class TabSystemModule extends BaseTabModule {
         keyAdapter.setOnBaseChoiceBoxAdapterCallBack(new BaseChoiceBoxAdapter.OnBaseChoiceBoxAdapterCallBack<KeyBean>() {
             @Override
             public void onItemClick(KeyBean item) {
-                UIUtils.setText(controller.getTf_system_farmer_public_key(), item.getFarmerPublicKey());
-                UIUtils.setText(controller.getTf_system_pool_public_key(), item.getPoolPublicKey());
+                UIUtils.setText(controller.textFieldSystemFarmerPublicKey, item.getFarmerPublicKey());
+                UIUtils.setText(controller.textFieldSystemPoolPublicKey, item.getPoolPublicKey());
             }
         });
-        UIUtils.setData(keyAdapter, controller.getCb_system_key(), list, 0);
+        UIUtils.setData(keyAdapter, controller.choiceBoxSystemKey, list, 0);
     }
 
     /**
@@ -114,8 +114,8 @@ public class TabSystemModule extends BaseTabModule {
                 .subscribeWith(new DisposableObserver<Long>() {
                     @Override
                     public void onNext(Long aLong) {
-                        UIUtils.setText(controller.getLb_system_memory_total(), "总共安装内存:" + MichaelUtils.formatMemory(MichaelUtils.getMemory(true)));
-                        UIUtils.setText(controller.getLb_system_memory_current(), "当前可用内存:" + MichaelUtils.formatMemory(MichaelUtils.getMemory(false)));
+                        UIUtils.setText(controller.labelSystemMemoryTotal, "总共安装内存:" + MichaelUtils.formatMemory(MichaelUtils.getMemory(true)));
+                        UIUtils.setText(controller.labelSystemMemoryCurrent, "当前可用内存:" + MichaelUtils.formatMemory(MichaelUtils.getMemory(false)));
                     }
 
                     @Override

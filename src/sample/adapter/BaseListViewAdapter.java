@@ -15,6 +15,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
 public class BaseListViewAdapter<T> extends ListCell<T> implements Callback<ListView<T>, ListCell<T>> {
+
+
+    private ArrayList<String> cacheList = new ArrayList<>();
     private OnBaseListViewAdapterCallBacK<T> onBaseListViewAdapterCallBacK;
     private Label label=new Label();
 
@@ -39,7 +42,7 @@ public class BaseListViewAdapter<T> extends ListCell<T> implements Callback<List
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     //item double click
                     if (onBaseListViewAdapterCallBacK != null) {
-                        onBaseListViewAdapterCallBacK.onItemClick(list.get(listView.getSelectionModel().getSelectedIndex()));
+                        onBaseListViewAdapterCallBacK.onItemClick(list.get(listView.getSelectionModel().getSelectedIndex()),listView.getSelectionModel().getSelectedIndex());
                     }
                 }
             }
@@ -69,7 +72,7 @@ public class BaseListViewAdapter<T> extends ListCell<T> implements Callback<List
 
         Node bindView(T item);
 
-        void onItemClick(T item);
+        void onItemClick(T item, int selectedIndex);
     }
 
 }

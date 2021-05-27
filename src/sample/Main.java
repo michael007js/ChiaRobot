@@ -35,7 +35,7 @@ public class Main extends Application {
         primaryStage.setTitle(AppConstant.APP_NAME + " V" + AppConstant.VERSION_NAME + " author by michael");
         primaryStage.setResizable(false);
         controller = fxmlLoader.getController();
-        Scene scene = new Scene(root, controller.getRoot_parent().getMaxWidth(), controller.getRoot_parent().getMaxHeight());
+        Scene scene = new Scene(root, controller.GridPaneRootParent.getMaxWidth(), controller.GridPaneRootParent.getMaxHeight());
         primaryStage.setScene(scene);
         primaryStage.show();
         initialize(primaryStage);
