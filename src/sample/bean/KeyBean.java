@@ -1,10 +1,25 @@
 package sample.bean;
 
 public class KeyBean {
+    /**
+     * 公共指纹
+     */
     private String fingerprint;
+    /**
+     * 公钥
+     */
     private String masterPublicKey;
+    /**
+     *农田公钥
+     */
     private String farmerPublicKey;
+    /**
+     * 池公钥
+     */
     private String poolPublicKey;
+    /**
+     * 钱包地址
+     */
     private String firstWalletAddress;
 
     public String getFingerprint() {

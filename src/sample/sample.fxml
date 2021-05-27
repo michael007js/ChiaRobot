@@ -8,6 +8,8 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -89,8 +91,21 @@
                                     <children>
 
                                         <Label layoutX="14.0" layoutY="14.0" text="任务预览" />
-                                        <ListView fx:id="listViewTaskQueue" layoutX="14.0" layoutY="39.0" prefHeight="344.0" prefWidth="773.0" />
                                         <Label fx:id="labelTaskSelect" layoutX="71.0" layoutY="14.0" maxWidth="710.0" />
+                              <TableView fx:id="tableViewTaskQueue" layoutX="14.0" layoutY="36.0" prefHeight="371.0" prefWidth="773.0">
+                                <columns>
+                                    <TableColumn maxWidth="150.0" minWidth="70.0" prefWidth="-1.0" text="序号" />
+                                  <TableColumn maxWidth="1000.0" minWidth="130.0" prefWidth="-1.0" text="缓存路径" />
+                                    <TableColumn maxWidth="1000.0" minWidth="130.0" prefWidth="-1.0" text="目标路径" />
+                                    <TableColumn maxWidth="100.0" minWidth="100.0" prefWidth="-1.0" text="类型" />
+                                    <TableColumn maxWidth="200.0" minWidth="60.0" prefWidth="-1.0" text="线程" />
+                                    <TableColumn maxWidth="300.0" minWidth="60.0" prefWidth="-1.0" text="内存" />
+                                    <TableColumn maxWidth="100.0" minWidth="50.0" prefWidth="-1.0" text="进度" />
+                                    <TableColumn maxWidth="100.0" minWidth="100.0" prefWidth="-1.0" text="用时" />
+
+
+                                </columns>
+                              </TableView>
                                     </children></AnchorPane>
                             </content>
                         </Tab>

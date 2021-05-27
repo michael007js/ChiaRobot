@@ -77,6 +77,8 @@ public class Controller implements Initializable {
     public ListView listViewTaskQueue;
     @FXML
     public Button buttonDiskAddToTaskQueue;
+    @FXML
+    public TableView tableViewTaskQueue;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

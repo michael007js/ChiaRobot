@@ -2142,29 +2142,29 @@ public class TimeUtils {
             if (h < 10) {
                 if (m < 10) {
                     if (s < 10) {
-                        return "0" + h + "时" + "0" + m + "分0" + s + "秒";
+                        return "0" + h + "小时" + "0" + m + "分0" + s + "秒";
                     } else {
-                        return "0" + h + "时" + "0" + m + "分" + s + "秒";
+                        return "0" + h + "小时" + "0" + m + "分" + s + "秒";
                     }
                 } else {
                     if (s < 10) {
-                        return "0" + h + "时" + m + "分0" + s + "秒";
+                        return "0" + h + "小时" + m + "分0" + s + "秒";
                     } else {
-                        return "0" + h + "时" + m + "分" + s + "秒";
+                        return "0" + h + "小时" + m + "分" + s + "秒";
                     }
                 }
             } else {
                 if (m < 10) {
                     if (s < 10) {
-                        return h + "时" + "0" + m + "分0" + s + "秒";
+                        return h + "小时" + "0" + m + "分0" + s + "秒";
                     } else {
-                        return h + "时" + "0" + m + "分" + s + "秒";
+                        return h + "小时" + "0" + m + "分" + s + "秒";
                     }
                 } else {
                     if (s < 10) {
-                        return h + "时" + m + "分0" + s + "秒";
+                        return h + "小时" + m + "分0" + s + "秒";
                     } else {
-                        return h + "时" + m + "分" + s + "秒";
+                        return h + "小时" + m + "分" + s + "秒";
                     }
                 }
             }

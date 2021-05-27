@@ -25,6 +25,10 @@ public class BaseListViewAdapter<T> extends ListCell<T> implements Callback<List
         this.onBaseListViewAdapterCallBacK = onBaseListViewAdapterCallBacK;
     }
 
+    public void setData(ListView<T> listView) {
+        setData(listView, data);
+    }
+
     public void setData(ListView<T> listView, ArrayList<T> list) {
         this.data = list;
         listView.getItems().clear();
