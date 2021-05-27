@@ -47,6 +47,7 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
         AppConstant.functionEnable = statusInitChiaProgramDirectory && statusInitChiaConfigFileDirectory;
         controller.getBtn_normal_change_program_directory().setOnAction(this::handle);
         controller.getBtn_normal_change_config_file_directory().setOnAction(this::handle);
+        controller.getBtn_normal_start_p_task().setOnAction(this::handle);
     }
 
     @Override
@@ -70,6 +71,8 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
                 AppConstant.functionEnable = statusInitChiaProgramDirectory && statusInitChiaConfigFileDirectory;
                 baseDirectorySettingChanged();
             }
+        } else if (event.getSource() == controller.getBtn_normal_start_p_task()) {
+
         }
     }
 

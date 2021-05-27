@@ -32,11 +32,11 @@ public class AppConstant {
     /**
      * 每个任务所分配的内存
      */
-    public static int EACH_TASK_MEMORY = 4096;
+    public static int P_TASK_MEMORY = 4096;
     /**
      * 每个任务所分配的线程
      */
-    public static int EACH_TASK_THREAD = 2;
+    public static int P_TASK_THREAD = 2;
     /******************************************************运行配置结束******************************************************/
     /**
      * chia程序目录

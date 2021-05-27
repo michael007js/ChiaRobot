@@ -1,8 +1,6 @@
 package sample.module;
 
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -15,7 +13,10 @@ import sample.constant.AppConstant;
 import sample.http.HttpCallBack;
 import sample.http.HttpService;
 import sample.module.base.BaseTabModule;
-import sample.utils.*;
+import sample.utils.AlertUtils;
+import sample.utils.JsonUtils;
+import sample.utils.MichaelUtils;
+import sample.utils.UIUtils;
 
 /**
  * 节点模块

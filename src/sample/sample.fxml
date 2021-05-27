@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane fx:id="root_parent" alignment="center" hgap="10" prefHeight="600.0" prefWidth="800.0" vgap="10" xmlns="http://javafx.com/javafx/8.0.211" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<GridPane fx:id="root_parent" alignment="center" hgap="10" prefHeight="600.0" prefWidth="800.0" vgap="10" xmlns="http://javafx.com/javafx/8.0.181" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <columnConstraints>
         <ColumnConstraints />
     </columnConstraints>
@@ -42,16 +42,16 @@
                             <content>
                                 <AnchorPane prefHeight="497.0" prefWidth="800.0">
                                     <children>
-                                        <ListView layoutX="14.0" layoutY="52.0" prefHeight="200.0" prefWidth="306.0" />
+                                        <ListView fx:id="lv_disk_directory_cache" layoutX="14.0" layoutY="52.0" prefHeight="100.0" prefWidth="306.0" />
                                         <Label layoutX="143.0" layoutY="27.0" text="缓存目录" />
                                         <Label layoutX="609.0" layoutY="27.0" text="存放目录" />
-                                        <ListView layoutX="480.0" layoutY="52.0" prefHeight="200.0" prefWidth="306.0" />
-                                        <Button layoutX="356.0" layoutY="90.0" mnemonicParsing="false" text="存放移到缓存" />
-                                        <Button layoutX="356.0" layoutY="173.0" mnemonicParsing="false" text="缓存移到存放" />
-                                        <Button layoutX="657.0" layoutY="261.0" mnemonicParsing="false" text="删除" />
-                                        <Button layoutX="123.0" layoutY="261.0" mnemonicParsing="false" text="新增" />
-                                        <Button layoutX="589.0" layoutY="261.0" mnemonicParsing="false" text="新增" />
-                                        <Button layoutX="191.0" layoutY="261.0" mnemonicParsing="false" text="删除" />
+                                        <ListView fx:id="lv_disk_directory_target" layoutX="480.0" layoutY="52.0" prefHeight="100.0" prefWidth="306.0" />
+                                        <Button fx:id="btn_disk_target_to_cache" layoutX="356.0" layoutY="71.0" mnemonicParsing="false" text="存放移到缓存" />
+                                        <Button fx:id="btn_disk_cache_to_target" layoutX="356.0" layoutY="111.0" mnemonicParsing="false" text="缓存移到存放" />
+                                        <Button fx:id="btn_disk_target_delete" layoutX="657.0" layoutY="160.0" mnemonicParsing="false" text="删除" />
+                                        <Button fx:id="btn_disk_cache_add" layoutX="123.0" layoutY="160.0" mnemonicParsing="false" text="新增" />
+                                        <Button fx:id="btn_disk_target_add" layoutX="589.0" layoutY="160.0" mnemonicParsing="false" text="新增" />
+                                        <Button fx:id="btn_disk_cache_delete" layoutX="191.0" layoutY="160.0" mnemonicParsing="false" text="删除" />
                                     </children></AnchorPane>
                             </content>
                         </Tab>
@@ -66,13 +66,13 @@
                               <Label layoutX="223.0" layoutY="82.0" text="M" />
                               <Slider fx:id="slider_system_memory_change" layoutX="14.0" layoutY="111.0" max="6144.0" min="2048.0" prefHeight="14.0" prefWidth="221.0" value="4096.0" />
                               <TextField fx:id="tf_system_memory_value" editable="false" layoutX="72.0" layoutY="78.0" prefHeight="23.0" prefWidth="142.0" text="4096" />
-                              <Label layoutX="300.0" layoutY="82.0" text="分配内存" />
+                              <Label layoutX="300.0" layoutY="82.0" text="分配线程" />
                               <TextField fx:id="tf_system_thread_value" editable="false" layoutX="355.0" layoutY="78.0" prefHeight="23.0" prefWidth="90.0" text="4" />
                               <Slider fx:id="slider_system_thread_change" layoutX="300.0" layoutY="111.0" max="16.0" min="2.0" prefHeight="14.0" prefWidth="154.0" value="4.0" />
-                              <TextField fx:id="tf_system_farmer_public_key" editable="false" layoutX="84.0" layoutY="189.0" prefHeight="23.0" prefWidth="278.0" />
+                              <TextField fx:id="tf_system_farmer_public_key" editable="false" layoutX="84.0" layoutY="189.0" prefHeight="23.0" prefWidth="360.0" />
                               <Label layoutX="14.0" layoutY="193.0" text="farmer公钥" />
                               <Label layoutX="13.0" layoutY="231.0" text="pool    公钥" />
-                              <TextField fx:id="tf_system_pool_public_key" editable="false" layoutX="84.0" layoutY="227.0" prefHeight="23.0" prefWidth="278.0" />
+                              <TextField fx:id="tf_system_pool_public_key" editable="false" layoutX="84.0" layoutY="227.0" prefHeight="23.0" prefWidth="360.0" />
                               <ChoiceBox fx:id="cb_system_key" layoutX="14.0" layoutY="148.0" prefWidth="150.0" />
                            </children></AnchorPane>
                             </content>
@@ -90,6 +90,7 @@
             <Button fx:id="btn_normal_change_config_file_directory" layoutX="357.0" layoutY="50.0" mnemonicParsing="false" text="更改目录" />
             <Label layoutX="14.0" layoutY="90.0" text="chia当前版本" />
             <TextField fx:id="tf_normal_app_version_directory" editable="false" layoutX="96.0" layoutY="86.0" prefHeight="23.0" prefWidth="261.0" promptText="app-1.0.0" />
+            <Button fx:id="btn_normal_start_p_task" disable="true" layoutX="695.0" layoutY="14.0" mnemonicParsing="false" text="开始P盘" />
             </children></AnchorPane>
 
 

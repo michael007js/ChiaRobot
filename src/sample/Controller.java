@@ -49,6 +49,24 @@ public class Controller implements Initializable {
     private TextField tf_system_pool_public_key;
     @FXML
     private ChoiceBox cb_system_key;
+    @FXML
+    private Button btn_normal_start_p_task;
+    @FXML
+    private Button btn_disk_cache_add;
+    @FXML
+    private Button btn_disk_cache_delete;
+    @FXML
+    private Button btn_disk_target_add;
+    @FXML
+    private Button btn_disk_target_delete;
+    @FXML
+    private Button btn_disk_cache_to_target;
+    @FXML
+    private Button btn_disk_target_to_cache;
+    @FXML
+    private ListView lv_disk_directory_target;
+    @FXML
+    private ListView lv_disk_directory_cache;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -132,5 +150,41 @@ public class Controller implements Initializable {
 
     public ChoiceBox getCb_system_key() {
         return cb_system_key;
+    }
+
+    public Button getBtn_normal_start_p_task() {
+        return btn_normal_start_p_task;
+    }
+
+    public Button getBtn_disk_cache_add() {
+        return btn_disk_cache_add;
+    }
+
+    public Button getBtn_disk_cache_delete() {
+        return btn_disk_cache_delete;
+    }
+
+    public Button getBtn_disk_target_add() {
+        return btn_disk_target_add;
+    }
+
+    public Button getBtn_disk_target_delete() {
+        return btn_disk_target_delete;
+    }
+
+    public Button getBtn_disk_cache_to_target() {
+        return btn_disk_cache_to_target;
+    }
+
+    public Button getBtn_disk_target_to_cache() {
+        return btn_disk_target_to_cache;
+    }
+
+    public ListView getLv_disk_directory_target() {
+        return lv_disk_directory_target;
+    }
+
+    public ListView getLv_disk_directory_cache() {
+        return lv_disk_directory_cache;
     }
 }

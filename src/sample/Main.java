@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import sample.constant.AppConstant;
+import sample.module.TabDiskModule;
 import sample.module.TabSystemModule;
 import sample.module.TabNodeModule;
 import sample.module.ConfigBaseInfolModule;
@@ -61,6 +62,10 @@ public class Main extends Application {
         TabNodeModule tabNodeModule = new TabNodeModule();
         tabNodeModule.initialize(controller);
         moduleList.add(tabNodeModule);
+
+        TabDiskModule tabDiskModule = new TabDiskModule();
+        tabDiskModule.initialize(controller);
+        moduleList.add(tabDiskModule);
 
         TabSystemModule tabSystemModule = new TabSystemModule();
         tabSystemModule.initialize(controller);

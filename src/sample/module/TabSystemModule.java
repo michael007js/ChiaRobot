@@ -23,11 +23,11 @@ public class TabSystemModule extends BaseTabModule {
     private Controller controller;
 
     /**
-     * 节点同步计时器
+     * 内存统计计时器
      */
     private DisposableObserver<Long> disposableObserver;
 
-    private BaseChoiceBoxAdapter<KeyBean> keyAdapter;
+    private BaseChoiceBoxAdapter<KeyBean> keyAdapter = new BaseChoiceBoxAdapter<>();
 
     @Override
     public void initialize(Controller mainController) {
@@ -35,15 +35,15 @@ public class TabSystemModule extends BaseTabModule {
         controller.getSlider_system_memory_change().valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                AppConstant.EACH_TASK_MEMORY = newValue.intValue();
-                UIUtils.setText(controller.getTf_system_memory_value(), AppConstant.EACH_TASK_MEMORY + "");
+                AppConstant.P_TASK_MEMORY = newValue.intValue();
+                UIUtils.setText(controller.getTf_system_memory_value(), AppConstant.P_TASK_MEMORY + "");
             }
         });
         controller.getSlider_system_thread_change().valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                AppConstant.EACH_TASK_THREAD = newValue.intValue();
-                UIUtils.setText(controller.getTf_system_thread_value(), AppConstant.EACH_TASK_THREAD + "");
+                AppConstant.P_TASK_THREAD = newValue.intValue();
+                UIUtils.setText(controller.getTf_system_thread_value(), AppConstant.P_TASK_THREAD + "");
             }
         });
         startMemoryStatistics();
@@ -53,6 +53,13 @@ public class TabSystemModule extends BaseTabModule {
 
     @Override
     public void baseDirectorySettingChanged() {
+        if (AppConstant.functionEnable) {
+            getKeys();
+        } else {
+            UIUtils.setText(controller.getTf_system_farmer_public_key(), "");
+            UIUtils.setText(controller.getTf_system_pool_public_key(), "");
+            UIUtils.setData(keyAdapter, controller.getCb_system_key(), new ArrayList<>());
+        }
 
     }
 
@@ -60,32 +67,34 @@ public class TabSystemModule extends BaseTabModule {
      * 获取密钥
      */
     private void getKeys() {
+        if (!AppConstant.functionEnable) {
+            return;
+        }
         String result = MichaelUtils.runByCMD(AppConstant.CHIA_PROGRAM_DIRECTORY + "/" + AppConstant.CHIA_APP_VERSION_DIRECTORY_NAME + "/resources/app.asar.unpacked/daemon/chia.exe" + " keys show ");
         String[] temp = result.split("\n" + "\n");
-        ArrayList<KeyBean> list=new ArrayList<>();
+        ArrayList<KeyBean> list = new ArrayList<>();
         for (int i = 0; i < temp.length; i++) {
             if (!StringUtils.isEmpty(temp[i])) {
                 String[] child = temp[i].split("\n");
-                if (child.length==5){
-                    KeyBean keyBean=new KeyBean();
-                    keyBean.setFingerprint(MichaelUtils.getSubString(child[0],": ",""));
-                    keyBean.setMasterPublicKey(MichaelUtils.getSubString(child[1],"): ",""));
-                    keyBean.setFarmerPublicKey(MichaelUtils.getSubString(child[2],"): ",""));
-                    keyBean.setPoolPublicKey(MichaelUtils.getSubString(child[3],"): ",""));
-                    keyBean.setFirstWalletAddress(MichaelUtils.getSubString(child[4],": ",""));
+                if (child.length == 5) {
+                    KeyBean keyBean = new KeyBean();
+                    keyBean.setFingerprint(MichaelUtils.getSubString(child[0], ": ", ""));
+                    keyBean.setMasterPublicKey(MichaelUtils.getSubString(child[1], "): ", ""));
+                    keyBean.setFarmerPublicKey(MichaelUtils.getSubString(child[2], "): ", ""));
+                    keyBean.setPoolPublicKey(MichaelUtils.getSubString(child[3], "): ", ""));
+                    keyBean.setFirstWalletAddress(MichaelUtils.getSubString(child[4], ": ", ""));
                     list.add(keyBean);
                 }
             }
         }
-        keyAdapter = new BaseChoiceBoxAdapter<>();
         keyAdapter.setOnBaseChoiceBoxAdapterCallBack(new BaseChoiceBoxAdapter.OnBaseChoiceBoxAdapterCallBack<KeyBean>() {
             @Override
             public void onItemClick(KeyBean item) {
-                UIUtils.setText(controller.getTf_system_farmer_public_key(),item.getFarmerPublicKey());
-                UIUtils.setText(controller.getTf_system_pool_public_key(),item.getPoolPublicKey());
+                UIUtils.setText(controller.getTf_system_farmer_public_key(), item.getFarmerPublicKey());
+                UIUtils.setText(controller.getTf_system_pool_public_key(), item.getPoolPublicKey());
             }
         });
-        UIUtils.setData(keyAdapter,controller.getCb_system_key(),list,0);
+        UIUtils.setData(keyAdapter, controller.getCb_system_key(), list, 0);
     }
 
     /**
