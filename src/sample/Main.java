@@ -13,10 +13,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import sample.constant.AppConstant;
-import sample.module.TabDiskModule;
-import sample.module.TabSystemModule;
-import sample.module.TabNodeModule;
-import sample.module.ConfigBaseInfolModule;
+import sample.module.*;
 import sample.module.base.BaseTabModule;
 import sample.utils.AlertUtils;
 
@@ -70,6 +67,12 @@ public class Main extends Application {
         TabSystemModule tabSystemModule = new TabSystemModule();
         tabSystemModule.initialize(controller);
         moduleList.add(tabSystemModule);
+
+        TabTaskModule tabTaskModule=new TabTaskModule();
+        tabTaskModule.initialize(controller);
+        moduleList.add(tabTaskModule);
+
+        tabDiskModule.setOnTaskModuleCallBack(tabTaskModule);
 
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override

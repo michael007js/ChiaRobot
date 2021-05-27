@@ -72,9 +72,11 @@ public class Controller implements Initializable {
     @FXML
     public Label labelDiskTargetSelect;
     @FXML
-    public Label labelDiskWaitQueue;
+    public Label labelTaskSelect;
     @FXML
-    public ListView listViewDiskWaitQueue;
+    public ListView listViewTaskQueue;
+    @FXML
+    public Button buttonDiskAddToTaskQueue;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

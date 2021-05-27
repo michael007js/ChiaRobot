@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import sample.Controller;
 import sample.adapter.BaseListViewAdapter;
+import sample.dao.OnTaskModuleCallBack;
 import sample.module.base.BaseTabModule;
 import sample.utils.AlertUtils;
 import sample.utils.StringUtils;
@@ -17,6 +18,10 @@ import sample.utils.UIUtils;
  * 磁盘模块
  */
 public class TabDiskModule extends BaseTabModule implements EventHandler<ActionEvent> {
+    /**
+     * 任务模块回调
+     */
+    private OnTaskModuleCallBack onDiskModuleCallBack;
     /**
      * 主控
      */
@@ -35,17 +40,21 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
         }
 
         @Override
-        public void onItemClick(String item, int selectedIndex) {
-            if (selectedIndex < cacheList.size()) {
-                UIUtils.setText(controller.labelDiskCacheSelect, cacheList.get(selectedIndex));
+        public void onItemClick(ArrayList<String> list, String item, int selectedIndex) {
+            if (selectedIndex < list.size()) {
+                UIUtils.setText(controller.labelDiskCacheSelect, list.get(selectedIndex));
                 controller.buttonDiskCacheToTarget.setDisable(false);
+                if (!StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())){
+                    controller.buttonDiskAddToTaskQueue.setDisable(false);
+                }else {
+                    controller.buttonDiskAddToTaskQueue.setDisable(true);
+                }
+
             }
         }
     });
-    /**
-     * 缓存目录列表数据
-     */
-    private ArrayList<String> cacheList = new ArrayList<>();
+
+
     /**
      * 存放目录适配器
      */
@@ -56,17 +65,19 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
         }
 
         @Override
-        public void onItemClick(String item, int selectedIndex) {
-            if (selectedIndex < targetList.size()) {
-                UIUtils.setText(controller.labelDiskTargetSelect, targetList.get(selectedIndex));
+        public void onItemClick(ArrayList<String> list, String item, int selectedIndex) {
+            if (selectedIndex < list.size()) {
+                UIUtils.setText(controller.labelDiskTargetSelect, list.get(selectedIndex));
                 controller.buttonDiskTargetToCache.setDisable(false);
+                if (!StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())){
+                    controller.buttonDiskAddToTaskQueue.setDisable(false);
+                }else {
+                    controller.buttonDiskAddToTaskQueue.setDisable(true);
+                }
             }
         }
     });
-    /**
-     * 存放目录列表数据
-     */
-    private ArrayList<String> targetList = new ArrayList<>();
+
 
     @Override
     public void initialize(Controller mainController) {
@@ -77,6 +88,7 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
         controller.buttonDiskTargetAdd.setOnAction(this);
         controller.buttonDiskTargetDelete.setOnAction(this);
         controller.buttonDiskTargetToCache.setOnAction(this);
+        controller.buttonDiskAddToTaskQueue.setOnAction(this);
     }
 
     @Override
@@ -94,22 +106,27 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
                 AlertUtils.showError("", "缓存目录路径为空");
                 return;
             }
-            for (int i = 0; i < cacheList.size(); i++) {
-                if (cacheList.get(i).equals(path)) {
+            for (int i = 0; i < cacheAdapter.getData().size(); i++) {
+                if (cacheAdapter.getData().get(i).equals(path)) {
                     AlertUtils.showError("", "缓存目录已存在路径");
                     return;
                 }
             }
-            cacheList.add(path);
+            cacheAdapter.getData().add(path);
             lastPath = path;
-            UIUtils.setData(cacheAdapter, controller.listViewDiskDirectoryCache, cacheList);
+            UIUtils.setData(cacheAdapter, controller.listViewDiskDirectoryCache, cacheAdapter.getData());
         } else if (event.getSource() == controller.buttonDiskCacheDelete) {
             int selectIndex = controller.listViewDiskDirectoryCache.getSelectionModel().getSelectedIndex();
-            if (selectIndex >= 0 && selectIndex < cacheList.size()) {
-                cacheList.remove(selectIndex);
-                cacheAdapter.setData(controller.listViewDiskDirectoryCache, cacheList);
+            if (selectIndex >= 0 && selectIndex < cacheAdapter.getData().size()) {
+                cacheAdapter.getData().remove(selectIndex);
+                cacheAdapter.setData(controller.listViewDiskDirectoryCache, cacheAdapter.getData());
                 UIUtils.setText(controller.labelDiskCacheSelect, "");
                 controller.buttonDiskCacheToTarget.setDisable(true);
+                if (!StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())){
+                    controller.buttonDiskAddToTaskQueue.setDisable(false);
+                }else {
+                    controller.buttonDiskAddToTaskQueue.setDisable(true);
+                }
             }
         } else if (event.getSource() == controller.buttonDiskCacheToTarget) {
             if (StringUtils.isEmpty(controller.labelDiskCacheSelect.getText())) {
@@ -117,19 +134,24 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
                 return;
             }
             int selectIndex = controller.listViewDiskDirectoryCache.getSelectionModel().getSelectedIndex();
-            if (selectIndex >= 0 && selectIndex < cacheList.size()) {
-                for (int i = 0; i < targetList.size(); i++) {
-                    if (cacheList.get(selectIndex).equals(targetList.get(i))) {
+            if (selectIndex >= 0 && selectIndex < cacheAdapter.getData().size()) {
+                for (int i = 0; i < targetAdapter.getData().size(); i++) {
+                    if (cacheAdapter.getData().get(selectIndex).equals(targetAdapter.getData().get(i))) {
                         AlertUtils.showError("", "存放目录已存在此路径");
                         return;
                     }
                 }
-                targetList.add(cacheList.get(selectIndex));
-                cacheList.remove(selectIndex);
-                cacheAdapter.setData(controller.listViewDiskDirectoryCache, cacheList);
-                targetAdapter.setData(controller.listViewDiskDirectoryTarget, targetList);
+                targetAdapter.getData().add((String) cacheAdapter.getData().get(selectIndex));
+                cacheAdapter.getData().remove(selectIndex);
+                cacheAdapter.setData(controller.listViewDiskDirectoryCache, cacheAdapter.getData());
+                targetAdapter.setData(controller.listViewDiskDirectoryTarget, targetAdapter.getData());
                 UIUtils.setText(controller.labelDiskCacheSelect, "");
                 controller.buttonDiskCacheToTarget.setDisable(true);
+                if (!StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())){
+                    controller.buttonDiskAddToTaskQueue.setDisable(false);
+                }else {
+                    controller.buttonDiskAddToTaskQueue.setDisable(true);
+                }
             }
         } else if (event.getSource() == controller.buttonDiskTargetAdd) {
             String path = AlertUtils.showDirectory(lastPath);
@@ -137,22 +159,27 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
                 AlertUtils.showError("", "存放目录路径为空");
                 return;
             }
-            for (int i = 0; i < targetList.size(); i++) {
-                if (cacheList.get(i).equals(path)) {
+            for (int i = 0; i < targetAdapter.getData().size(); i++) {
+                if (cacheAdapter.getData().get(i).equals(path)) {
                     AlertUtils.showError("", "存放目录已存在路径");
                     return;
                 }
             }
-            targetList.add(path);
+            targetAdapter.getData().add(path);
             lastPath = path;
-            UIUtils.setData(targetAdapter, controller.listViewDiskDirectoryTarget, targetList);
+            UIUtils.setData(targetAdapter, controller.listViewDiskDirectoryTarget, targetAdapter.getData());
         } else if (event.getSource() == controller.buttonDiskTargetDelete) {
             int selectIndex = controller.listViewDiskDirectoryTarget.getSelectionModel().getSelectedIndex();
-            if (selectIndex >= 0 && selectIndex < targetList.size()) {
-                targetList.remove(controller.listViewDiskDirectoryTarget.getSelectionModel().getSelectedIndex());
-                targetAdapter.setData(controller.listViewDiskDirectoryTarget, targetList);
+            if (selectIndex >= 0 && selectIndex < targetAdapter.getData().size()) {
+                targetAdapter.getData().remove(controller.listViewDiskDirectoryTarget.getSelectionModel().getSelectedIndex());
+                targetAdapter.setData(controller.listViewDiskDirectoryTarget, targetAdapter.getData());
                 UIUtils.setText(controller.labelDiskTargetSelect, "");
                 controller.buttonDiskTargetToCache.setDisable(true);
+                if (!StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())){
+                    controller.buttonDiskAddToTaskQueue.setDisable(false);
+                }else {
+                    controller.buttonDiskAddToTaskQueue.setDisable(true);
+                }
             }
         } else if (event.getSource() == controller.buttonDiskTargetToCache) {
             if (StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())) {
@@ -160,21 +187,37 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
                 return;
             }
             int selectIndex = controller.listViewDiskDirectoryTarget.getSelectionModel().getSelectedIndex();
-            if (selectIndex >= 0 && selectIndex < targetList.size()) {
-                for (int i = 0; i < cacheList.size(); i++) {
-                    if (targetList.get(selectIndex).equals(cacheList.get(i))) {
+            if (selectIndex >= 0 && selectIndex < targetAdapter.getData().size()) {
+                for (int i = 0; i < cacheAdapter.getData().size(); i++) {
+                    if (targetAdapter.getData().get(selectIndex).equals(cacheAdapter.getData().get(i))) {
                         AlertUtils.showError("", "缓存目录已存在此路径");
                         return;
                     }
                 }
-                cacheList.add(targetList.get(selectIndex));
-                targetList.remove(selectIndex);
-                targetAdapter.setData(controller.listViewDiskDirectoryTarget, targetList);
-                cacheAdapter.setData(controller.listViewDiskDirectoryCache, cacheList);
+                cacheAdapter.getData().add(targetAdapter.getData().get(selectIndex));
+                targetAdapter.getData().remove(selectIndex);
+                targetAdapter.setData(controller.listViewDiskDirectoryTarget, targetAdapter.getData());
+                cacheAdapter.setData(controller.listViewDiskDirectoryCache, cacheAdapter.getData());
                 UIUtils.setText(controller.labelDiskTargetSelect, "");
                 controller.buttonDiskTargetToCache.setDisable(true);
+                if (!StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())){
+                    controller.buttonDiskAddToTaskQueue.setDisable(false);
+                }else {
+                    controller.buttonDiskAddToTaskQueue.setDisable(true);
+                }
+            }
+        } else if (event.getSource() == controller.buttonDiskAddToTaskQueue) {
+            if (onDiskModuleCallBack != null && !StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())) {
+                onDiskModuleCallBack.onCreateTaskDirectory(controller.labelDiskCacheSelect.getText(),controller.labelDiskTargetSelect.getText());
             }
         }
+    }
+
+    /**
+     * 设置任务模块回调
+     */
+    public void setOnTaskModuleCallBack(OnTaskModuleCallBack onDiskModuleCallBack) {
+        this.onDiskModuleCallBack = onDiskModuleCallBack;
     }
 
 }

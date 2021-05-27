@@ -17,17 +17,18 @@ import javafx.util.Callback;
 public class BaseListViewAdapter<T> extends ListCell<T> implements Callback<ListView<T>, ListCell<T>> {
 
 
-    private ArrayList<String> cacheList = new ArrayList<>();
+    private ArrayList<T> data = new ArrayList<>();
     private OnBaseListViewAdapterCallBacK<T> onBaseListViewAdapterCallBacK;
-    private Label label=new Label();
+    private Label label = new Label();
 
     public BaseListViewAdapter(OnBaseListViewAdapterCallBacK<T> onBaseListViewAdapterCallBacK) {
         this.onBaseListViewAdapterCallBacK = onBaseListViewAdapterCallBacK;
     }
 
     public void setData(ListView<T> listView, ArrayList<T> list) {
+        this.data = list;
         listView.getItems().clear();
-        listView.setItems(FXCollections.observableArrayList(list));
+        listView.setItems(FXCollections.observableArrayList(data));
         listView.setCellFactory(this);
         listView.getSelectionModel().selectedItemProperty()
                 .addListener(new ChangeListener<T>() {
@@ -42,14 +43,16 @@ public class BaseListViewAdapter<T> extends ListCell<T> implements Callback<List
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     //item double click
                     if (onBaseListViewAdapterCallBacK != null) {
-                        onBaseListViewAdapterCallBacK.onItemClick(list.get(listView.getSelectionModel().getSelectedIndex()),listView.getSelectionModel().getSelectedIndex());
+                        onBaseListViewAdapterCallBacK.onItemClick(data, data.get(listView.getSelectionModel().getSelectedIndex()), listView.getSelectionModel().getSelectedIndex());
                     }
                 }
             }
         });
-
     }
 
+    public ArrayList<T> getData() {
+        return data == null ? new ArrayList<>() : data;
+    }
 
     @Override
     public ListCell<T> call(ListView<T> param) {
@@ -63,7 +66,7 @@ public class BaseListViewAdapter<T> extends ListCell<T> implements Callback<List
             if (onBaseListViewAdapterCallBacK != null) {
                 this.setGraphic(onBaseListViewAdapterCallBacK.bindView(item));
             }
-        }else {
+        } else {
             this.setGraphic(label);
         }
     }
@@ -72,7 +75,7 @@ public class BaseListViewAdapter<T> extends ListCell<T> implements Callback<List
 
         Node bindView(T item);
 
-        void onItemClick(T item, int selectedIndex);
+        void onItemClick(ArrayList<T> list, T item, int selectedIndex);
     }
 
 }
