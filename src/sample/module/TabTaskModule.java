@@ -1,37 +1,43 @@
 package sample.module;
 
-import java.util.ArrayList;
+import com.sun.javafx.application.PlatformImpl;
 
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.observers.DisposableObserver;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
 import sample.Controller;
-import sample.adapter.BaseListViewAdapter;
 import sample.bean.TaskBean;
 import sample.constant.AppConstant;
 import sample.dao.OnTaskModuleCallBack;
 import sample.module.base.BaseTabModule;
-import sample.utils.LogUtils;
+import sample.utils.MichaelUtils;
+import sample.utils.UIUtils;
 
 /**
  * 任务模块
  */
-public class TabTaskModule extends BaseTabModule implements EventHandler<ActionEvent>, OnTaskModuleCallBack {
+public class TabTaskModule extends BaseTabModule implements EventHandler<ActionEvent>, OnTaskModuleCallBack, Runnable {
     /**
      * 主控
      */
     private Controller controller;
     private ObservableList<TaskBean> data;
+    /**
+     * 内存统计计时器
+     */
+    private DisposableObserver<Long> disposableObserver;
 
     @Override
     public void initialize(Controller mainController) {
         this.controller = mainController;
+        startUpdateTaskInfo();
 
     }
 
@@ -57,13 +63,25 @@ public class TabTaskModule extends BaseTabModule implements EventHandler<ActionE
         TaskBean taskBean = new TaskBean();
         taskBean.setNumber(data.size() + 1);
         taskBean.setCache(cacheDirectory);
-        taskBean.setTime(3000);
         taskBean.setTarget(targetDirectory);
         taskBean.setType("");
+        taskBean.setRunning(true);
         taskBean.setThread(AppConstant.P_TASK_THREAD);
         taskBean.setMemory(AppConstant.P_TASK_MEMORY);
         data.add(taskBean);
+    }
 
+
+    @Override
+    public void run() {
+        if (data == null) {
+            return;
+        }
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).isRunning()) {
+                data.get(i).setTime(data.get(i).getTime() + 1000);
+            }
+        }
         ObservableList<TableColumn> observableList = controller.tableViewTaskQueue.getColumns();
         for (int i = 0; i < observableList.size(); i++) {
             if ("缓存路径".equals(observableList.get(i).getText())) {
@@ -85,6 +103,37 @@ public class TabTaskModule extends BaseTabModule implements EventHandler<ActionE
             }
         }
         controller.tableViewTaskQueue.setItems(data);
-
     }
+
+    /**
+     * 停止任务统计
+     */
+    private void stopUpdateTaskInfo() {
+        if (disposableObserver != null && !disposableObserver.isDisposed()) {
+            disposableObserver.dispose();
+        }
+    }
+
+    /**
+     * 开始任务刷新
+     */
+    private void startUpdateTaskInfo() {
+        disposableObserver = Observable.interval(1, TimeUnit.SECONDS)
+                .subscribeWith(new DisposableObserver<Long>() {
+                    @Override
+                    public void onNext(Long aLong) {
+                        PlatformImpl.runLater(TabTaskModule.this);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
 }

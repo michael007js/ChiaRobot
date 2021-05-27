@@ -8,6 +8,9 @@ import javafx.beans.value.ObservableValue;
 import sample.utils.TimeUtils;
 
 public class TaskBean {
+
+    private boolean isRunning;
+
     /**
      * 序号
      */
@@ -52,6 +55,14 @@ public class TaskBean {
      * 内存
      */
     private SimpleIntegerProperty memory = new SimpleIntegerProperty();
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public void setRunning(boolean running) {
+        isRunning = running;
+    }
 
     public int getNumber() {
         return number.get();

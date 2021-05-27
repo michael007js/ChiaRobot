@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import sample.Controller;
 import sample.adapter.BaseListViewAdapter;
+import sample.constant.AppConstant;
 import sample.dao.OnTaskModuleCallBack;
 import sample.module.base.BaseTabModule;
 import sample.utils.AlertUtils;
@@ -44,16 +45,11 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
             if (selectedIndex < list.size()) {
                 UIUtils.setText(controller.labelDiskCacheSelect, list.get(selectedIndex));
                 controller.buttonDiskCacheToTarget.setDisable(false);
-                if (!StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())){
-                    controller.buttonDiskAddToTaskQueue.setDisable(false);
-                }else {
-                    controller.buttonDiskAddToTaskQueue.setDisable(true);
-                }
+                updateButtonStatus();
 
             }
         }
     });
-
 
     /**
      * 存放目录适配器
@@ -69,11 +65,7 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
             if (selectedIndex < list.size()) {
                 UIUtils.setText(controller.labelDiskTargetSelect, list.get(selectedIndex));
                 controller.buttonDiskTargetToCache.setDisable(false);
-                if (!StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())){
-                    controller.buttonDiskAddToTaskQueue.setDisable(false);
-                }else {
-                    controller.buttonDiskAddToTaskQueue.setDisable(true);
-                }
+                updateButtonStatus();
             }
         }
     });
@@ -93,7 +85,7 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
 
     @Override
     public void baseDirectorySettingChanged() {
-
+        updateButtonStatus();
     }
 
 
@@ -122,11 +114,7 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
                 cacheAdapter.setData(controller.listViewDiskDirectoryCache, cacheAdapter.getData());
                 UIUtils.setText(controller.labelDiskCacheSelect, "");
                 controller.buttonDiskCacheToTarget.setDisable(true);
-                if (!StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())){
-                    controller.buttonDiskAddToTaskQueue.setDisable(false);
-                }else {
-                    controller.buttonDiskAddToTaskQueue.setDisable(true);
-                }
+                updateButtonStatus();
             }
         } else if (event.getSource() == controller.buttonDiskCacheToTarget) {
             if (StringUtils.isEmpty(controller.labelDiskCacheSelect.getText())) {
@@ -147,11 +135,7 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
                 targetAdapter.setData(controller.listViewDiskDirectoryTarget, targetAdapter.getData());
                 UIUtils.setText(controller.labelDiskCacheSelect, "");
                 controller.buttonDiskCacheToTarget.setDisable(true);
-                if (!StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())){
-                    controller.buttonDiskAddToTaskQueue.setDisable(false);
-                }else {
-                    controller.buttonDiskAddToTaskQueue.setDisable(true);
-                }
+                updateButtonStatus();
             }
         } else if (event.getSource() == controller.buttonDiskTargetAdd) {
             String path = AlertUtils.showDirectory(lastPath);
@@ -175,11 +159,7 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
                 targetAdapter.setData(controller.listViewDiskDirectoryTarget, targetAdapter.getData());
                 UIUtils.setText(controller.labelDiskTargetSelect, "");
                 controller.buttonDiskTargetToCache.setDisable(true);
-                if (!StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())){
-                    controller.buttonDiskAddToTaskQueue.setDisable(false);
-                }else {
-                    controller.buttonDiskAddToTaskQueue.setDisable(true);
-                }
+                updateButtonStatus();
             }
         } else if (event.getSource() == controller.buttonDiskTargetToCache) {
             if (StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())) {
@@ -200,15 +180,11 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
                 cacheAdapter.setData(controller.listViewDiskDirectoryCache, cacheAdapter.getData());
                 UIUtils.setText(controller.labelDiskTargetSelect, "");
                 controller.buttonDiskTargetToCache.setDisable(true);
-                if (!StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())){
-                    controller.buttonDiskAddToTaskQueue.setDisable(false);
-                }else {
-                    controller.buttonDiskAddToTaskQueue.setDisable(true);
-                }
+                updateButtonStatus();
             }
         } else if (event.getSource() == controller.buttonDiskAddToTaskQueue) {
             if (onDiskModuleCallBack != null && !StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())) {
-                onDiskModuleCallBack.onCreateTaskDirectory(controller.labelDiskCacheSelect.getText(),controller.labelDiskTargetSelect.getText());
+                onDiskModuleCallBack.onCreateTaskDirectory(controller.labelDiskCacheSelect.getText(), controller.labelDiskTargetSelect.getText());
             }
         }
     }
@@ -219,5 +195,17 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
     public void setOnTaskModuleCallBack(OnTaskModuleCallBack onDiskModuleCallBack) {
         this.onDiskModuleCallBack = onDiskModuleCallBack;
     }
+
+    /**
+     * 更新按钮状态
+     */
+    private void updateButtonStatus() {
+        if (AppConstant.functionEnable && !StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())) {
+            controller.buttonDiskAddToTaskQueue.setDisable(false);
+        } else {
+            controller.buttonDiskAddToTaskQueue.setDisable(true);
+        }
+    }
+
 
 }
