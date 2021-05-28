@@ -16,6 +16,8 @@ public class Controller implements Initializable {
     @FXML
     public CheckBox checkBoxNodeSyncByAuto;
     @FXML
+    public CheckBox checkBoxNodeSyncForChina;
+    @FXML
     public TextField textFieldNormalProgramDirectory;
     @FXML
     public Button buttonNormalChangeProgramDirectory;
@@ -49,6 +51,8 @@ public class Controller implements Initializable {
     public TextField textFieldSystemPoolPublicKey;
     @FXML
     public ChoiceBox choiceBoxSystemKey;
+    @FXML
+    public ChoiceBox choiceBoxSystemPType;
     @FXML
     public Button buttonNormalStartPTask;
     @FXML

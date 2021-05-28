@@ -200,7 +200,12 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
      * 更新按钮状态
      */
     private void updateButtonStatus() {
-        if (AppConstant.functionEnable && !StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) && !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText())) {
+        if (AppConstant.functionEnable &&
+                !StringUtils.isEmpty(controller.labelDiskCacheSelect.getText()) &&
+                !StringUtils.isEmpty(controller.labelDiskTargetSelect.getText()) &&
+                AppConstant.keyBean != null &&
+                AppConstant.chiaPTypeBean != null
+        ) {
             controller.buttonDiskAddToTaskQueue.setDisable(false);
         } else {
             controller.buttonDiskAddToTaskQueue.setDisable(true);

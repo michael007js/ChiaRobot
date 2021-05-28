@@ -1,6 +1,9 @@
 package sample.constant;
 
 
+import sample.bean.ChiaPTypeBean;
+import sample.bean.KeyBean;
+
 @SuppressWarnings("ALL")
 public class AppConstant {
 
@@ -11,7 +14,7 @@ public class AppConstant {
     /**
      * 打印网络日志
      */
-    public static boolean IS_PRINT_NETWORK_LOG = false;
+    public static boolean IS_PRINT_NETWORK_LOG = true;
     /**
      * 应用名
      */
@@ -37,6 +40,15 @@ public class AppConstant {
      * 每个任务所分配的线程
      */
     public static int P_TASK_THREAD = 2;
+    /**
+     * chia秘钥
+     */
+    public static KeyBean keyBean;
+    /**
+     * chiaP盘类型
+     */
+    public static ChiaPTypeBean chiaPTypeBean;
+
     /******************************************************运行配置结束******************************************************/
     /**
      * chia程序目录

@@ -9,7 +9,15 @@ import sample.utils.TimeUtils;
 
 public class TaskBean {
 
+    /**
+     * 是否运行中
+     */
     private boolean isRunning;
+
+    /**
+     * chia秘钥模型
+     */
+    private KeyBean keyBean;
 
     /**
      * 序号
@@ -55,6 +63,10 @@ public class TaskBean {
      * 内存
      */
     private SimpleIntegerProperty memory = new SimpleIntegerProperty();
+    /**
+     * 公共指纹
+     */
+    private SimpleStringProperty finger = new SimpleStringProperty();
 
     public boolean isRunning() {
         return isRunning;
@@ -170,5 +182,26 @@ public class TaskBean {
 
     public void setMemory(int memory) {
         this.memory.set(memory);
+    }
+
+    public String getFinger() {
+        return finger.get();
+    }
+
+    public SimpleStringProperty fingerProperty() {
+        return finger;
+    }
+
+    public void setFinger(String finger) {
+        this.finger.set(finger);
+    }
+
+    public KeyBean getKeyBean() {
+        return keyBean;
+    }
+
+    public void setKeyBean(KeyBean keyBean) {
+        this.keyBean = keyBean;
+        setFinger(keyBean.getFingerprint());
     }
 }

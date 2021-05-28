@@ -9,6 +9,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import sample.Controller;
 import sample.adapter.BaseChoiceBoxAdapter;
+import sample.bean.ChiaPTypeBean;
 import sample.bean.KeyBean;
 import sample.constant.AppConstant;
 import sample.module.base.BaseTabModule;
@@ -27,7 +28,15 @@ public class TabSystemModule extends BaseTabModule {
      */
     private DisposableObserver<Long> disposableObserver;
 
+    /**
+     * 秘钥适配器
+     */
     private BaseChoiceBoxAdapter<KeyBean> keyAdapter = new BaseChoiceBoxAdapter<>();
+
+    /**
+     * P盘类型适配器
+     */
+    private BaseChoiceBoxAdapter<ChiaPTypeBean> typeAdapter = new BaseChoiceBoxAdapter<>();
 
     @Override
     public void initialize(Controller mainController) {
@@ -47,6 +56,7 @@ public class TabSystemModule extends BaseTabModule {
             }
         });
         startMemoryStatistics();
+        initPType();
         getKeys();
 
     }
@@ -56,11 +66,45 @@ public class TabSystemModule extends BaseTabModule {
         if (AppConstant.functionEnable) {
             getKeys();
         } else {
+            AppConstant.keyBean = null;
+            AppConstant.chiaPTypeBean = null;
             UIUtils.setText(controller.textFieldSystemFarmerPublicKey, "");
             UIUtils.setText(controller.textFieldSystemPoolPublicKey, "");
             UIUtils.setData(keyAdapter, controller.choiceBoxSystemKey, new ArrayList<>());
         }
 
+    }
+
+    /**
+     * 初始化P盘类型
+     */
+    private void initPType() {
+        ArrayList<ChiaPTypeBean> list = new ArrayList<>();
+
+        for (int i = 0; i < 4; i++) {
+            ChiaPTypeBean chiaPTypeBean = new ChiaPTypeBean();
+            if (i == 0) {
+                chiaPTypeBean.setName("101.4GIB(K32,缓存文件239GIB)");
+                chiaPTypeBean.setType("K32");
+            } else if (i == 1) {
+                chiaPTypeBean.setName("208.8GIB(K33,缓存文件521GIB)");
+                chiaPTypeBean.setType("K33");
+            } else if (i == 2) {
+                chiaPTypeBean.setName("429.8GIB(K34,缓存文件1041GIB)");
+                chiaPTypeBean.setType("K34");
+            } else if (i == 3) {
+                chiaPTypeBean.setName("884.1GIB(K35,缓存文件2175GIB)");
+                chiaPTypeBean.setType("K35");
+            }
+            list.add(chiaPTypeBean);
+        }
+        typeAdapter.setOnBaseChoiceBoxAdapterCallBack(new BaseChoiceBoxAdapter.OnBaseChoiceBoxAdapterCallBack<ChiaPTypeBean>() {
+            @Override
+            public void onItemClick(ChiaPTypeBean item) {
+                AppConstant.chiaPTypeBean = item;
+            }
+        });
+        UIUtils.setData(typeAdapter, controller.choiceBoxSystemPType, list, 0);
     }
 
     /**
@@ -92,6 +136,7 @@ public class TabSystemModule extends BaseTabModule {
             public void onItemClick(KeyBean item) {
                 UIUtils.setText(controller.textFieldSystemFarmerPublicKey, item.getFarmerPublicKey());
                 UIUtils.setText(controller.textFieldSystemPoolPublicKey, item.getPoolPublicKey());
+                AppConstant.keyBean = item;
             }
         });
         UIUtils.setData(keyAdapter, controller.choiceBoxSystemKey, list, 0);

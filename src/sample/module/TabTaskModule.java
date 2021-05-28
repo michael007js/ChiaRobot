@@ -68,6 +68,8 @@ public class TabTaskModule extends BaseTabModule implements EventHandler<ActionE
         taskBean.setRunning(true);
         taskBean.setThread(AppConstant.P_TASK_THREAD);
         taskBean.setMemory(AppConstant.P_TASK_MEMORY);
+        taskBean.setKeyBean(AppConstant.keyBean);
+        taskBean.setType(AppConstant.chiaPTypeBean.getType());
         data.add(taskBean);
     }
 
@@ -100,6 +102,8 @@ public class TabTaskModule extends BaseTabModule implements EventHandler<ActionE
                 observableList.get(i).setCellValueFactory(new PropertyValueFactory<TaskBean, String>("type"));
             } else if ("进度".equals(observableList.get(i).getText())) {
                 observableList.get(i).setCellValueFactory(new PropertyValueFactory<TaskBean, String>("progress"));
+            } else if ("公共指纹".equals(observableList.get(i).getText())) {
+                observableList.get(i).setCellValueFactory(new PropertyValueFactory<TaskBean, String>("finger"));
             }
         }
         controller.tableViewTaskQueue.setItems(data);
