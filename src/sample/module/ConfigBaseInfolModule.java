@@ -14,6 +14,7 @@ import javafx.event.EventHandler;
 import sample.Controller;
 import sample.bean.ChiaCalculationPowerBean;
 import sample.constant.AppConstant;
+import sample.dao.OnCmdStringResponseCallBack;
 import sample.http.HttpCallBack;
 import sample.http.HttpService;
 import sample.module.base.BaseTabModule;
@@ -22,6 +23,7 @@ import sample.utils.*;
 /**
  * 基础配置信息模块
  */
+@SuppressWarnings("ALL")
 public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler<ActionEvent> {
     /**
      * 主控制器
@@ -72,6 +74,20 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
                 baseDirectorySettingChanged();
             }
         } else if (event.getSource() == controller.buttonNormalStartPTask) {
+           new Thread(){
+               @Override
+               public void run() {
+                   super.run();
+                   String baseCommend = AppConstant.CHIA_PROGRAM_DIRECTORY + "\\" + AppConstant.CHIA_APP_VERSION_DIRECTORY_NAME + "\\resources\\app.asar.unpacked\\daemon\\";
+                   baseCommend += "chia plots create -k 32 -n 1 -t u:/ -d h:/ -b 3900 -r 2 -u 128";
+                   MichaelUtils.runByCMD(new OnCmdStringResponseCallBack() {
+                       @Override
+                       public void onResult(String line) {
+                           LogUtils.e(line);
+                       }
+                   },"cmd.exe", "/c", baseCommend);
+               }
+           }.start();
 
         }
     }

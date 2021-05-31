@@ -14,6 +14,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.Region;
 import javafx.stage.Screen;
+import sample.dao.OnCmdStringResponseCallBack;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class MichaelUtils {
             Runtime runtime = Runtime.getRuntime();
             Process process = runtime.exec("cmd /c " + exePath);
             InputStream fis = process.getInputStream();
-            InputStreamReader isr = new InputStreamReader(fis);
+            InputStreamReader isr = new InputStreamReader(fis, Charset.forName("GBK"));
             BufferedReader br = new BufferedReader(isr);
 
             String line = null;
@@ -68,12 +69,52 @@ public class MichaelUtils {
         return stringBuilder.toString();
     }
 
+    public static String runByCMD( OnCmdStringResponseCallBack onCmdStringResponseCallBack,String... command) {
+        StringBuffer b = new StringBuffer();
+        ProcessBuilder builder = new ProcessBuilder();
+        builder.command(command);
+        try {
+            BufferedReader br;
+            Process exec = builder.start();
+            br = new BufferedReader(new InputStreamReader(exec.getInputStream(), Charset.forName("GBK")));
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                if (onCmdStringResponseCallBack!=null){
+                    onCmdStringResponseCallBack.onResult(line);
+                }
+                b.append(line + "\n");
+            }
+            return b.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return e.getLocalizedMessage();
+        }
+    }
 
     public static String runByCMD(String command) {
         Runtime runtime = Runtime.getRuntime();
         StringBuffer b = new StringBuffer();
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(runtime.exec(command).getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(runtime.exec(command).getInputStream(), Charset.forName("GBK")));
+            //StringBuffer b = new StringBuffer();
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                b.append(line + "\n");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return b.toString();
+        }
+        return b.toString();
+    }
+
+    public static String requestFileOrDirectoryPermission(String path) {
+        String commend = "Icacls " + path + " /grant EveryOne:f";
+        Runtime runtime = Runtime.getRuntime();
+        StringBuffer b = new StringBuffer();
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(runtime.exec(commend).getInputStream(), Charset.forName("GBK")));
             //StringBuffer b = new StringBuffer();
             String line = null;
             while ((line = br.readLine()) != null) {
