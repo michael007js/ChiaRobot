@@ -50,7 +50,7 @@ public class TaskBean {
     /**
      * 类型
      */
-    private SimpleStringProperty type = new SimpleStringProperty();
+    private SimpleIntegerProperty type = new SimpleIntegerProperty();
     /**
      * 进度
      */
@@ -136,15 +136,15 @@ public class TaskBean {
         this.target.set(target);
     }
 
-    public String getType() {
+    public int getType() {
         return type.get();
     }
 
-    public SimpleStringProperty typeProperty() {
+    public SimpleIntegerProperty typeProperty() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type.set(type);
     }
 

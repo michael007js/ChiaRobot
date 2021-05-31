@@ -85,16 +85,16 @@ public class TabSystemModule extends BaseTabModule {
             ChiaPTypeBean chiaPTypeBean = new ChiaPTypeBean();
             if (i == 0) {
                 chiaPTypeBean.setName("101.4GIB(K32,缓存文件239GIB)");
-                chiaPTypeBean.setType("K32");
+                chiaPTypeBean.setType(32);
             } else if (i == 1) {
                 chiaPTypeBean.setName("208.8GIB(K33,缓存文件521GIB)");
-                chiaPTypeBean.setType("K33");
+                chiaPTypeBean.setType(33);
             } else if (i == 2) {
                 chiaPTypeBean.setName("429.8GIB(K34,缓存文件1041GIB)");
-                chiaPTypeBean.setType("K34");
+                chiaPTypeBean.setType(34);
             } else if (i == 3) {
                 chiaPTypeBean.setName("884.1GIB(K35,缓存文件2175GIB)");
-                chiaPTypeBean.setType("K35");
+                chiaPTypeBean.setType(35);
             }
             list.add(chiaPTypeBean);
         }

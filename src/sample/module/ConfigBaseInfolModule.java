@@ -13,8 +13,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import sample.Controller;
 import sample.bean.ChiaCalculationPowerBean;
+import sample.bean.TaskBean;
 import sample.constant.AppConstant;
 import sample.dao.OnCmdStringResponseCallBack;
+import sample.dao.OnTaskModuleCallBack;
 import sample.http.HttpCallBack;
 import sample.http.HttpService;
 import sample.module.base.BaseTabModule;
@@ -25,6 +27,10 @@ import sample.utils.*;
  */
 @SuppressWarnings("ALL")
 public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler<ActionEvent> {
+    /**
+     * 任务模块回调
+     */
+    private OnTaskModuleCallBack onTaskModuleCallBack;
     /**
      * 主控制器
      */
@@ -52,6 +58,10 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
         controller.buttonNormalStartPTask.setOnAction(this::handle);
     }
 
+    public void setOnTaskModuleCallBack(OnTaskModuleCallBack onTaskModuleCallBack) {
+        this.onTaskModuleCallBack = onTaskModuleCallBack;
+    }
+
     @Override
     public void baseDirectorySettingChanged() {
         //TODO 本模块中无实际使用意义，仅在new对象时重写此方法，基础设置被用户改变后可触发回调通知调用者
@@ -74,20 +84,28 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
                 baseDirectorySettingChanged();
             }
         } else if (event.getSource() == controller.buttonNormalStartPTask) {
-           new Thread(){
-               @Override
-               public void run() {
-                   super.run();
-                   String baseCommend = AppConstant.CHIA_PROGRAM_DIRECTORY + "\\" + AppConstant.CHIA_APP_VERSION_DIRECTORY_NAME + "\\resources\\app.asar.unpacked\\daemon\\";
-                   baseCommend += "chia plots create -k 32 -n 1 -t u:/ -d h:/ -b 3900 -r 2 -u 128";
-                   MichaelUtils.runByCMD(new OnCmdStringResponseCallBack() {
-                       @Override
-                       public void onResult(String line) {
-                           LogUtils.e(line);
-                       }
-                   },"cmd.exe", "/c", baseCommend);
-               }
-           }.start();
+            if (onTaskModuleCallBack.getTask().size() == 0) {
+                AlertUtils.showError("错误", "请先创建P盘任务");
+                return;
+            }
+            for (int i = 0; i < onTaskModuleCallBack.getTask().size(); i++) {
+                TaskBean taskBean = onTaskModuleCallBack.getTask().get(i);
+                new Thread() {
+                    @Override
+                    public void run() {
+                        super.run();
+                        String baseCommend = AppConstant.CHIA_PROGRAM_DIRECTORY + "\\" + AppConstant.CHIA_APP_VERSION_DIRECTORY_NAME + "\\resources\\app.asar.unpacked\\daemon\\";
+                        baseCommend += "chia plots create -k " + taskBean.getType() + " -n 1 -t " + taskBean.getCache() + " -d " + taskBean.getTarget() + " -b " + taskBean.getMemory() + " -r " + taskBean.getThread() + " -u 128";
+                        MichaelUtils.runByCMD(new OnCmdStringResponseCallBack() {
+                            @Override
+                            public void onResult(String line) {
+                                LogUtils.e(line);
+                            }
+                        }, "cmd.exe", "/c", baseCommend);
+                    }
+                }.start();
+            }
+
 
         }
     }

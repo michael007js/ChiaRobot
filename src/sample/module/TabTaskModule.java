@@ -2,6 +2,7 @@ package sample.module;
 
 import com.sun.javafx.application.PlatformImpl;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -17,8 +18,6 @@ import sample.bean.TaskBean;
 import sample.constant.AppConstant;
 import sample.dao.OnTaskModuleCallBack;
 import sample.module.base.BaseTabModule;
-import sample.utils.MichaelUtils;
-import sample.utils.UIUtils;
 
 /**
  * 任务模块
@@ -64,13 +63,17 @@ public class TabTaskModule extends BaseTabModule implements EventHandler<ActionE
         taskBean.setNumber(data.size() + 1);
         taskBean.setCache(cacheDirectory);
         taskBean.setTarget(targetDirectory);
-        taskBean.setType("");
         taskBean.setRunning(true);
         taskBean.setThread(AppConstant.P_TASK_THREAD);
         taskBean.setMemory(AppConstant.P_TASK_MEMORY);
         taskBean.setKeyBean(AppConstant.keyBean);
         taskBean.setType(AppConstant.chiaPTypeBean.getType());
         data.add(taskBean);
+    }
+
+    @Override
+    public ObservableList<TaskBean> getTask() {
+        return data == null ? FXCollections.observableArrayList() : data;
     }
 
 

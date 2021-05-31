@@ -72,6 +72,7 @@ public class Main extends Application {
         tabTaskModule.initialize(controller);
         moduleList.add(tabTaskModule);
 
+        configBaseInfolModule.setOnTaskModuleCallBack(tabTaskModule);
         tabDiskModule.setOnTaskModuleCallBack(tabTaskModule);
 
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
