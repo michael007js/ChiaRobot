@@ -14,6 +14,8 @@ public class TaskBean {
      */
     private boolean isRunning;
 
+    private String log;
+
     /**
      * chia秘钥模型
      */
@@ -27,11 +29,37 @@ public class TaskBean {
     /**
      * 格式化用时
      */
+    private SimpleStringProperty createTimeFormat = new SimpleStringProperty();
+    /**
+     * 创建时间
+     */
+    private SimpleLongProperty createTime = new SimpleLongProperty();
+
+    {
+        createTime.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                createTimeFormat.set(TimeUtils.millis2String(newValue.longValue()));
+            }
+        });
+        createTime.set(System.currentTimeMillis());
+    }
+
+    /**
+     * 格式化用时
+     */
     private SimpleStringProperty timeFormat = new SimpleStringProperty();
+
+    {
+        timeFormat.set("-");
+    }
+
     /**
      * 用时
      */
-    private SimpleLongProperty time = new SimpleLongProperty();{
+    private SimpleLongProperty time = new SimpleLongProperty();
+
+    {
         time.addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -39,6 +67,7 @@ public class TaskBean {
             }
         });
     }
+
     /**
      * 缓存路径
      */
@@ -74,6 +103,30 @@ public class TaskBean {
 
     public void setRunning(boolean running) {
         isRunning = running;
+    }
+
+    public long getCreateTime() {
+        return createTime.get();
+    }
+
+    public SimpleLongProperty createTimeProperty() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime.set(createTime);
+    }
+
+    public String getCreateTimeFormat() {
+        return createTimeFormat.get();
+    }
+
+    public SimpleStringProperty createTimeFormatProperty() {
+        return createTimeFormat;
+    }
+
+    public void setCreateTimeFormat(String createTimeFormat) {
+        this.createTimeFormat.set(createTimeFormat);
     }
 
     public int getNumber() {
@@ -203,5 +256,13 @@ public class TaskBean {
     public void setKeyBean(KeyBean keyBean) {
         this.keyBean = keyBean;
         setFinger(keyBean.getFingerprint());
+    }
+
+    public String getLog() {
+        return log;
+    }
+
+    public void setLog(String log) {
+        this.log = log;
     }
 }

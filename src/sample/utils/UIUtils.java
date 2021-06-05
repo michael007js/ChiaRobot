@@ -119,16 +119,20 @@ public class UIUtils {
     }
 
     public static <T> void setData(BaseListViewAdapter adapter, ListView<?> listView, ArrayList<T> list) {
+        setData(adapter, listView, null);
+    }
+
+    public static <T> void setData(BaseListViewAdapter adapter, ListView<?> listView, ArrayList<T> list, ArrayList<MenuItem> menuItems) {
         if (!PlatformImpl.isFxApplicationThread()) {
             PlatformImpl.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    adapter.setData(listView, list);
+                    adapter.setData(listView, list, menuItems);
 
                 }
             });
         } else {
-            adapter.setData(listView, list);
+            adapter.setData(listView, list, menuItems);
         }
     }
 

@@ -12,6 +12,8 @@ public class Controller implements Initializable {
     @FXML
     public GridPane GridPaneRootParent;
     @FXML
+    public TabPane tabPane;
+    @FXML
     public Button buttonNodeSyncByUser;
     @FXML
     public CheckBox checkBoxNodeSyncByAuto;
@@ -25,6 +27,8 @@ public class Controller implements Initializable {
     public TextField textFieldNormalConfigFileDirectory;
     @FXML
     public TextField textFieldNormalAppVersionDirectory;
+    @FXML
+    public TextField textFieldNormalRunningTask;
     @FXML
     public Button buttonNormalChangeConfigFileDirectory;
     @FXML
@@ -56,14 +60,6 @@ public class Controller implements Initializable {
     @FXML
     public Button buttonNormalStartPTask;
     @FXML
-    public Button buttonDiskCacheAdd;
-    @FXML
-    public Button buttonDiskCacheDelete;
-    @FXML
-    public Button buttonDiskTargetAdd;
-    @FXML
-    public Button buttonDiskTargetDelete;
-    @FXML
     public Button buttonDiskCacheToTarget;
     @FXML
     public Button buttonDiskTargetToCache;
@@ -77,8 +73,7 @@ public class Controller implements Initializable {
     public Label labelDiskTargetSelect;
     @FXML
     public Label labelTaskSelect;
-    @FXML
-    public ListView listViewTaskQueue;
+
     @FXML
     public Button buttonDiskAddToTaskQueue;
     @FXML

@@ -2,6 +2,7 @@ package sample.utils;
 
 
 import com.sun.management.OperatingSystemMXBean;
+
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.observers.DisposableObserver;
@@ -69,7 +70,7 @@ public class MichaelUtils {
         return stringBuilder.toString();
     }
 
-    public static String runByCMD( OnCmdStringResponseCallBack onCmdStringResponseCallBack,String... command) {
+    public static String runByCMD(OnCmdStringResponseCallBack onCmdStringResponseCallBack, String... command) {
         StringBuffer b = new StringBuffer();
         ProcessBuilder builder = new ProcessBuilder();
         builder.command(command);
@@ -78,11 +79,13 @@ public class MichaelUtils {
             Process exec = builder.start();
             br = new BufferedReader(new InputStreamReader(exec.getInputStream(), Charset.forName("GBK")));
             String line = null;
+            int lineCount = 0;
             while ((line = br.readLine()) != null) {
-                if (onCmdStringResponseCallBack!=null){
-                    onCmdStringResponseCallBack.onResult(line);
-                }
                 b.append(line + "\n");
+                lineCount++;
+                if (onCmdStringResponseCallBack != null) {
+                    onCmdStringResponseCallBack.onResult(line, b.toString(),lineCount);
+                }
             }
             return b.toString();
         } catch (IOException e) {

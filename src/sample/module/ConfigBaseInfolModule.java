@@ -9,11 +9,12 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.observers.DisposableObserver;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import sample.Controller;
 import sample.bean.ChiaCalculationPowerBean;
-import sample.bean.TaskBean;
 import sample.constant.AppConstant;
 import sample.dao.OnCmdStringResponseCallBack;
 import sample.dao.OnTaskModuleCallBack;
@@ -38,7 +39,11 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
     /**
      * 算力/价格定时器
      */
-    private DisposableObserver<Long> disposableObserver;
+    private DisposableObserver<Long> powerPriceDisposableObserver;
+    /**
+     * 算力/价格定时器
+     */
+    private DisposableObserver<Long> pTaskDisposableObserver;
     /**
      * chia程序目录与chia配置文件目录初始化状态
      */
@@ -56,6 +61,23 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
         controller.buttonNormalChangeProgramDirectory.setOnAction(this::handle);
         controller.buttonNormalChangeConfigFileDirectory.setOnAction(this::handle);
         controller.buttonNormalStartPTask.setOnAction(this::handle);
+
+        controller.textFieldNormalRunningTask.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (StringUtils.isEmpty(newValue)) {
+                    controller.textFieldNormalRunningTask.setText("1");
+                    AppConstant.P_RUNNING_TASK = 1;
+                    return;
+                }
+                if (!newValue.matches("^[1-9]\\d*$")) {
+                    controller.textFieldNormalRunningTask.setText("1");
+                    AppConstant.P_RUNNING_TASK = 1;
+                    return;
+                }
+                AppConstant.P_RUNNING_TASK = Integer.parseInt(newValue);
+            }
+        });
     }
 
     public void setOnTaskModuleCallBack(OnTaskModuleCallBack onTaskModuleCallBack) {
@@ -84,26 +106,16 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
                 baseDirectorySettingChanged();
             }
         } else if (event.getSource() == controller.buttonNormalStartPTask) {
-            if (onTaskModuleCallBack.getTask().size() == 0) {
-                AlertUtils.showError("错误", "请先创建P盘任务");
-                return;
-            }
-            for (int i = 0; i < onTaskModuleCallBack.getTask().size(); i++) {
-                TaskBean taskBean = onTaskModuleCallBack.getTask().get(i);
-                new Thread() {
-                    @Override
-                    public void run() {
-                        super.run();
-                        String baseCommend = AppConstant.CHIA_PROGRAM_DIRECTORY + "\\" + AppConstant.CHIA_APP_VERSION_DIRECTORY_NAME + "\\resources\\app.asar.unpacked\\daemon\\";
-                        baseCommend += "chia plots create -k " + taskBean.getType() + " -n 1 -t " + taskBean.getCache() + " -d " + taskBean.getTarget() + " -b " + taskBean.getMemory() + " -r " + taskBean.getThread() + " -u 128";
-                        MichaelUtils.runByCMD(new OnCmdStringResponseCallBack() {
-                            @Override
-                            public void onResult(String line) {
-                                LogUtils.e(line);
-                            }
-                        }, "cmd.exe", "/c", baseCommend);
-                    }
-                }.start();
+            if ("开始P盘".equals(controller.buttonNormalStartPTask.getText())) {
+                if (onTaskModuleCallBack.getTask().size() == 0) {
+                    AlertUtils.showError("错误", "请先创建P盘任务");
+                    return;
+                }
+                createTaskTimer();
+                controller.buttonNormalStartPTask.setText("停止");
+            } else {
+                clearTaskTimer();
+                controller.buttonNormalStartPTask.setText("开始P盘");
             }
 
 
@@ -198,6 +210,78 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
     }
 
     /**
+     * 创建P盘定时器
+     *
+     * @param byUser 是否为用户手动触发
+     */
+    private void createTaskTimer() {
+        if (pTaskDisposableObserver != null) {
+            return;
+        }
+        pTaskDisposableObserver = Observable
+                .interval(1, TimeUnit.SECONDS)
+                .subscribeWith(new DisposableObserver<Long>() {
+                    @Override
+                    public void onNext(Long aLong) {
+                        int total = 0;
+                        for (int i = 0; i < onTaskModuleCallBack.getTask().size(); i++) {
+                            if (onTaskModuleCallBack.getTask().get(i).isRunning()) {
+                                total++;
+                            }
+
+                        }
+                        if (total >= AppConstant.P_RUNNING_TASK) {
+                            return;
+                        }
+
+                        for (int i = 0; i < onTaskModuleCallBack.getTask().size(); i++) {
+                            if (!onTaskModuleCallBack.getTask().get(i).isRunning()) {
+                                onTaskModuleCallBack.getTask().get(i).setRunning(true);
+                                String baseCommend = AppConstant.CHIA_PROGRAM_DIRECTORY + "\\" + AppConstant.CHIA_APP_VERSION_DIRECTORY_NAME + "\\resources\\app.asar.unpacked\\daemon\\";
+                                baseCommend += "chia plots create -k " + onTaskModuleCallBack.getTask().get(i).getType() + " -n 1 -t " + onTaskModuleCallBack.getTask().get(i).getCache() + " -d " + onTaskModuleCallBack.getTask().get(i).getTarget() + " -b " + onTaskModuleCallBack.getTask().get(i).getMemory() + " -r " + onTaskModuleCallBack.getTask().get(i).getThread() + " -u 128";
+                                String finalBaseCommend = baseCommend;
+                                int finalI = i;
+                                new Thread(){
+                                   @Override
+                                   public void run() {
+                                       super.run();
+                                       MichaelUtils.runByCMD(new OnCmdStringResponseCallBack() {
+                                           @Override
+                                           public void onResult(String currentLine, String full, int lineCount) {
+                                               onTaskModuleCallBack.getTask().get(finalI).setLog(full);
+                                               onTaskModuleCallBack.getTask().get(finalI).setProgress(ProgressHelper.getProgress(lineCount));
+                                           }
+                                       }, "cmd.exe", "/c", finalBaseCommend);
+                                   }
+                               }.start();
+                                total++;
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    /**
+     * 清除P盘定时器
+     */
+    private void clearTaskTimer() {
+        if (pTaskDisposableObserver != null && !pTaskDisposableObserver.isDisposed()) {
+            pTaskDisposableObserver.dispose();
+        }
+    }
+
+
+    /**
      * 创建算力/价格定时器
      *
      * @param byUser 是否为用户手动触发
@@ -207,7 +291,7 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
             getCalculationPowerAndPrice();
         } else {
             clearCalculationPowerAndPriceTimer();
-            disposableObserver = Observable.interval(10, TimeUnit.MINUTES)
+            powerPriceDisposableObserver = Observable.interval(10, TimeUnit.MINUTES)
                     .subscribeWith(new DisposableObserver<Long>() {
                         @Override
                         protected void onStart() {
@@ -237,8 +321,8 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
      * 清除算力/价格定时器
      */
     private void clearCalculationPowerAndPriceTimer() {
-        if (disposableObserver != null && !disposableObserver.isDisposed()) {
-            disposableObserver.dispose();
+        if (powerPriceDisposableObserver != null && !powerPriceDisposableObserver.isDisposed()) {
+            powerPriceDisposableObserver.dispose();
         }
     }
 
@@ -253,7 +337,7 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
                 if (chiaCalculationPowerBean == null || chiaCalculationPowerBean.getData() == null || chiaCalculationPowerBean.getData().size() == 0) {
                     UIUtils.setText(controller.labelNormalCurrentCalculationPower, "全网算力:获取失败");
                 } else {
-                    UIUtils.setText(controller.labelNormalCurrentCalculationPower, "全网算力:" + StringUtils.double2String(chiaCalculationPowerBean.getData().get(chiaCalculationPowerBean.getData().size() - 1), 3) + "PiB");
+                    UIUtils.setText(controller.labelNormalCurrentCalculationPower, "全网算力:" + StringUtils.double2String(chiaCalculationPowerBean.getData().get(0), 3) + "PiB");
                 }
             }
 
@@ -269,7 +353,7 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
                 if (chiaCalculationPowerBean == null || chiaCalculationPowerBean.getData() == null || chiaCalculationPowerBean.getData().size() == 0) {
                     UIUtils.setText(controller.labelNormalCurrentPrice, "当前价格:获取失败");
                 } else {
-                    UIUtils.setText(controller.labelNormalCurrentPrice, "当前价格:$" + StringUtils.double2String(chiaCalculationPowerBean.getData().get(chiaCalculationPowerBean.getData().size() - 1), 2));
+                    UIUtils.setText(controller.labelNormalCurrentPrice, "当前价格:$" + StringUtils.double2String(chiaCalculationPowerBean.getData().get(0), 2));
                 }
             }
 

@@ -4,6 +4,9 @@ package sample.constant;
 import sample.bean.ChiaPTypeBean;
 import sample.bean.KeyBean;
 
+/**
+ *
+ */
 @SuppressWarnings("ALL")
 public class AppConstant {
 
@@ -31,6 +34,7 @@ public class AppConstant {
 
     public static final long CACHE_HALF_ONE_HOUR = 1000 * 60 * 30;
     public static final long CACHE_ONE_HOUR = CACHE_HALF_ONE_HOUR * 2;
+
     /******************************************************运行配置开始******************************************************/
     /**
      * 每个任务所分配的内存
@@ -40,6 +44,10 @@ public class AppConstant {
      * 每个任务所分配的线程
      */
     public static int P_TASK_THREAD = 2;
+    /**
+     * 并发任务数
+     */
+    public static int P_RUNNING_TASK = 1;
     /**
      * chia秘钥
      */
@@ -72,7 +80,7 @@ public class AppConstant {
     /**
      * 实时价格地址
      */
-    public static final String CHIA_PRICE_URL = "https://api2.chiaexplorer.com/chart/xchPriceChart";
+    public static final String CHIA_PRICE_URL = "https://api2.chiaexplorer.com/chart/xchPriceChart?period=24h";
     /**
      * 节点同步地址
      */

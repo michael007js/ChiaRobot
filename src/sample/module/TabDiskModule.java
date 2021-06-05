@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import sample.Controller;
 import sample.adapter.BaseListViewAdapter;
 import sample.constant.AppConstant;
@@ -32,6 +33,17 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
      */
     private String lastPath = "C:/";
     /**
+     * 菜单
+     */
+    private ArrayList<MenuItem> menuItems = new ArrayList<>();
+
+    {
+        menuItems.add(new MenuItem("添加"));
+        menuItems.add(new MenuItem("删除"));
+
+    }
+
+    /**
      * 缓存目录适配器
      */
     private BaseListViewAdapter cacheAdapter = new BaseListViewAdapter<>(new BaseListViewAdapter.OnBaseListViewAdapterCallBacK<String>() {
@@ -47,6 +59,35 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
                 controller.buttonDiskCacheToTarget.setDisable(false);
                 updateButtonStatus();
 
+            }
+        }
+
+        @Override
+        public void onMenuItemClick(MenuItem menuItem) {
+            if ("添加".equals(menuItem.getText())) {
+                String path = AlertUtils.showDirectory(lastPath);
+                if (StringUtils.isEmpty(path)) {
+                    AlertUtils.showError("", "缓存目录路径为空");
+                    return;
+                }
+                for (int i = 0; i < cacheAdapter.getData().size(); i++) {
+                    if (cacheAdapter.getData().get(i).equals(path)) {
+                        AlertUtils.showError("", "缓存目录已存在路径");
+                        return;
+                    }
+                }
+                cacheAdapter.getData().add(path);
+                lastPath = path;
+                UIUtils.setData(cacheAdapter, controller.listViewDiskDirectoryCache, cacheAdapter.getData(), menuItems);
+            } else if ("删除".equals(menuItem.getText())) {
+                int selectIndex = controller.listViewDiskDirectoryCache.getSelectionModel().getSelectedIndex();
+                if (selectIndex >= 0 && selectIndex < cacheAdapter.getData().size()) {
+                    cacheAdapter.getData().remove(selectIndex);
+                    cacheAdapter.setData(controller.listViewDiskDirectoryCache, cacheAdapter.getData(), menuItems);
+                    UIUtils.setText(controller.labelDiskCacheSelect, "");
+                    controller.buttonDiskCacheToTarget.setDisable(true);
+                    updateButtonStatus();
+                }
             }
         }
     });
@@ -68,19 +109,52 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
                 updateButtonStatus();
             }
         }
+
+        @Override
+        public void onMenuItemClick(MenuItem menuItem) {
+            if ("添加".equals(menuItem.getText())) {
+                String path = AlertUtils.showDirectory(lastPath);
+                if (StringUtils.isEmpty(path)) {
+                    AlertUtils.showError("", "存放目录路径为空");
+                    return;
+                }
+                for (int i = 0; i < targetAdapter.getData().size(); i++) {
+                    if (cacheAdapter.getData().get(i).equals(path)) {
+                        AlertUtils.showError("", "存放目录已存在路径");
+                        return;
+                    }
+                }
+                targetAdapter.getData().add(path);
+                lastPath = path;
+                UIUtils.setData(targetAdapter, controller.listViewDiskDirectoryTarget, targetAdapter.getData(), menuItems);
+            } else if ("删除".equals(menuItem.getText())) {
+                int selectIndex = controller.listViewDiskDirectoryTarget.getSelectionModel().getSelectedIndex();
+                if (selectIndex >= 0 && selectIndex < targetAdapter.getData().size()) {
+                    targetAdapter.getData().remove(controller.listViewDiskDirectoryTarget.getSelectionModel().getSelectedIndex());
+                    targetAdapter.setData(controller.listViewDiskDirectoryTarget, targetAdapter.getData(), menuItems);
+                    UIUtils.setText(controller.labelDiskTargetSelect, "");
+                    controller.buttonDiskTargetToCache.setDisable(true);
+                    updateButtonStatus();
+                }
+            }
+        }
     });
 
 
     @Override
     public void initialize(Controller mainController) {
         this.controller = mainController;
-        controller.buttonDiskCacheAdd.setOnAction(this);
-        controller.buttonDiskCacheDelete.setOnAction(this);
         controller.buttonDiskCacheToTarget.setOnAction(this);
-        controller.buttonDiskTargetAdd.setOnAction(this);
-        controller.buttonDiskTargetDelete.setOnAction(this);
         controller.buttonDiskTargetToCache.setOnAction(this);
         controller.buttonDiskAddToTaskQueue.setOnAction(this);
+
+        cacheAdapter.getData().add("e:/chia_temp");
+        lastPath = "e:/chia_temp";
+        UIUtils.setData(cacheAdapter, controller.listViewDiskDirectoryCache, cacheAdapter.getData(), menuItems);
+
+        targetAdapter.getData().add("e:/chia_target");
+        lastPath = "e:/chia_target";
+        UIUtils.setData(targetAdapter, controller.listViewDiskDirectoryTarget, targetAdapter.getData(), menuItems);
     }
 
     @Override
@@ -92,31 +166,7 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
     @SuppressWarnings("DuplicatedCode")
     @Override
     public void handle(ActionEvent event) {
-        if (event.getSource() == controller.buttonDiskCacheAdd) {
-            String path = AlertUtils.showDirectory(lastPath);
-            if (StringUtils.isEmpty(path)) {
-                AlertUtils.showError("", "缓存目录路径为空");
-                return;
-            }
-            for (int i = 0; i < cacheAdapter.getData().size(); i++) {
-                if (cacheAdapter.getData().get(i).equals(path)) {
-                    AlertUtils.showError("", "缓存目录已存在路径");
-                    return;
-                }
-            }
-            cacheAdapter.getData().add(path);
-            lastPath = path;
-            UIUtils.setData(cacheAdapter, controller.listViewDiskDirectoryCache, cacheAdapter.getData());
-        } else if (event.getSource() == controller.buttonDiskCacheDelete) {
-            int selectIndex = controller.listViewDiskDirectoryCache.getSelectionModel().getSelectedIndex();
-            if (selectIndex >= 0 && selectIndex < cacheAdapter.getData().size()) {
-                cacheAdapter.getData().remove(selectIndex);
-                cacheAdapter.setData(controller.listViewDiskDirectoryCache, cacheAdapter.getData());
-                UIUtils.setText(controller.labelDiskCacheSelect, "");
-                controller.buttonDiskCacheToTarget.setDisable(true);
-                updateButtonStatus();
-            }
-        } else if (event.getSource() == controller.buttonDiskCacheToTarget) {
+        if (event.getSource() == controller.buttonDiskCacheToTarget) {
             if (StringUtils.isEmpty(controller.labelDiskCacheSelect.getText())) {
                 AlertUtils.showError("", "请选中要转移到存放目录的路径");
                 return;
@@ -131,34 +181,10 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
                 }
                 targetAdapter.getData().add((String) cacheAdapter.getData().get(selectIndex));
                 cacheAdapter.getData().remove(selectIndex);
-                cacheAdapter.setData(controller.listViewDiskDirectoryCache, cacheAdapter.getData());
-                targetAdapter.setData(controller.listViewDiskDirectoryTarget, targetAdapter.getData());
+                cacheAdapter.setData(controller.listViewDiskDirectoryCache, cacheAdapter.getData(), menuItems);
+                targetAdapter.setData(controller.listViewDiskDirectoryTarget, targetAdapter.getData(), menuItems);
                 UIUtils.setText(controller.labelDiskCacheSelect, "");
                 controller.buttonDiskCacheToTarget.setDisable(true);
-                updateButtonStatus();
-            }
-        } else if (event.getSource() == controller.buttonDiskTargetAdd) {
-            String path = AlertUtils.showDirectory(lastPath);
-            if (StringUtils.isEmpty(path)) {
-                AlertUtils.showError("", "存放目录路径为空");
-                return;
-            }
-            for (int i = 0; i < targetAdapter.getData().size(); i++) {
-                if (cacheAdapter.getData().get(i).equals(path)) {
-                    AlertUtils.showError("", "存放目录已存在路径");
-                    return;
-                }
-            }
-            targetAdapter.getData().add(path);
-            lastPath = path;
-            UIUtils.setData(targetAdapter, controller.listViewDiskDirectoryTarget, targetAdapter.getData());
-        } else if (event.getSource() == controller.buttonDiskTargetDelete) {
-            int selectIndex = controller.listViewDiskDirectoryTarget.getSelectionModel().getSelectedIndex();
-            if (selectIndex >= 0 && selectIndex < targetAdapter.getData().size()) {
-                targetAdapter.getData().remove(controller.listViewDiskDirectoryTarget.getSelectionModel().getSelectedIndex());
-                targetAdapter.setData(controller.listViewDiskDirectoryTarget, targetAdapter.getData());
-                UIUtils.setText(controller.labelDiskTargetSelect, "");
-                controller.buttonDiskTargetToCache.setDisable(true);
                 updateButtonStatus();
             }
         } else if (event.getSource() == controller.buttonDiskTargetToCache) {
@@ -176,8 +202,8 @@ public class TabDiskModule extends BaseTabModule implements EventHandler<ActionE
                 }
                 cacheAdapter.getData().add(targetAdapter.getData().get(selectIndex));
                 targetAdapter.getData().remove(selectIndex);
-                targetAdapter.setData(controller.listViewDiskDirectoryTarget, targetAdapter.getData());
-                cacheAdapter.setData(controller.listViewDiskDirectoryCache, cacheAdapter.getData());
+                targetAdapter.setData(controller.listViewDiskDirectoryTarget, targetAdapter.getData(), menuItems);
+                cacheAdapter.setData(controller.listViewDiskDirectoryCache, cacheAdapter.getData(), menuItems);
                 UIUtils.setText(controller.labelDiskTargetSelect, "");
                 controller.buttonDiskTargetToCache.setDisable(true);
                 updateButtonStatus();

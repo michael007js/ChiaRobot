@@ -45,6 +45,8 @@ public class Main extends Application {
 
 
     private void initialize(Stage primaryStage) {
+
+
         ConfigBaseInfolModule configBaseInfolModule = new ConfigBaseInfolModule() {
             @Override
             public void baseDirectorySettingChanged() {
@@ -68,7 +70,7 @@ public class Main extends Application {
         tabSystemModule.initialize(controller);
         moduleList.add(tabSystemModule);
 
-        TabTaskModule tabTaskModule=new TabTaskModule();
+        TabTaskModule tabTaskModule = new TabTaskModule();
         tabTaskModule.initialize(controller);
         moduleList.add(tabTaskModule);
 
