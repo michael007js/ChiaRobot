@@ -14,6 +14,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -76,7 +77,7 @@ public class TabTaskModule extends BaseTabModule implements EventHandler<ActionE
                             boolean effectiveCurrentIndexRun = false;
                             if (effectiveIndex) {
                                 //当前选中下标item是否处于未运行状态
-                                effectiveCurrentIndexRun = !getTask().get(index).isRunning();
+                                effectiveCurrentIndexRun = getTask().get(index).getTaskStatus() != TaskBean.TaskStatus.RUNNING;
                             }
                             if (effectiveIndex && effectiveCurrentIndexRun) {
                                 menuItem.setDisable(false);
@@ -85,7 +86,7 @@ public class TabTaskModule extends BaseTabModule implements EventHandler<ActionE
                             }
 
                         }
-                        if ( "运行日志".equals(menuItem.getText())) {
+                        if ("运行日志".equals(menuItem.getText())) {
                             //当前选中下标是否有效
                             boolean effectiveIndex = index >= 0 && index < getTask().size();
                             if (effectiveIndex) {
@@ -110,7 +111,12 @@ public class TabTaskModule extends BaseTabModule implements EventHandler<ActionE
                                 } else if ("添加".equals(menuItem.getText())) {
                                     AlertUtils.showInfo("提示", "请从磁盘配置中添加任务");
                                 } else if ("运行日志".equals(menuItem.getText())) {
-                                    AlertUtils.showInfo("提示", getTask().get(controller.tableViewTaskQueue.getSelectionModel().getSelectedIndex()).getLog());
+                                    TextArea textArea = new TextArea(getTask().get(controller.tableViewTaskQueue.getSelectionModel().getSelectedIndex()).getFullLog());
+                                    textArea.setEditable(false);
+                                    textArea.setWrapText(true);
+                                    textArea.setMaxWidth(Double.MAX_VALUE);
+                                    textArea.setMaxHeight(Double.MAX_VALUE);
+                                    AlertUtils.showInfo("日志", getTask().get(controller.tableViewTaskQueue.getSelectionModel().getSelectedIndex()).getCurrentLineLog(), textArea);
                                 }
                             }
                         });
@@ -147,7 +153,7 @@ public class TabTaskModule extends BaseTabModule implements EventHandler<ActionE
         taskBean.setNumber(data.size() + 1);
         taskBean.setCache(cacheDirectory);
         taskBean.setTarget(targetDirectory);
-        taskBean.setRunning(false);
+        taskBean.setTaskStatus(TaskBean.TaskStatus.NORMAL);
         taskBean.setThread(AppConstant.P_TASK_THREAD);
         taskBean.setMemory(AppConstant.P_TASK_MEMORY);
         taskBean.setKeyBean(AppConstant.keyBean);
@@ -166,7 +172,7 @@ public class TabTaskModule extends BaseTabModule implements EventHandler<ActionE
             return;
         }
         for (int i = 0; i < data.size(); i++) {
-            if (data.get(i).isRunning()) {
+            if (data.get(i).getTaskStatus() == TaskBean.TaskStatus.RUNNING) {
                 data.get(i).setTime(data.get(i).getTime() + 1000);
             }
         }
@@ -174,6 +180,8 @@ public class TabTaskModule extends BaseTabModule implements EventHandler<ActionE
         for (int i = 0; i < observableList.size(); i++) {
             if ("缓存路径".equals(observableList.get(i).getText())) {
                 observableList.get(i).setCellValueFactory(new PropertyValueFactory<TaskBean, String>("cache"));
+            } else if ("状态".equals(observableList.get(i).getText())) {
+                observableList.get(i).setCellValueFactory(new PropertyValueFactory<TaskBean, String>("formatRun"));
             } else if ("目标路径".equals(observableList.get(i).getText())) {
                 observableList.get(i).setCellValueFactory(new PropertyValueFactory<TaskBean, String>("target"));
             } else if ("线程".equals(observableList.get(i).getText())) {

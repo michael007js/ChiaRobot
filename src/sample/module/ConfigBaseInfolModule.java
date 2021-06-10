@@ -15,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import sample.Controller;
 import sample.bean.ChiaCalculationPowerBean;
+import sample.bean.TaskBean;
 import sample.constant.AppConstant;
 import sample.dao.OnCmdStringResponseCallBack;
 import sample.dao.OnTaskModuleCallBack;
@@ -215,9 +216,10 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
      * @param byUser 是否为用户手动触发
      */
     private void createTaskTimer() {
-        if (pTaskDisposableObserver != null) {
-            return;
-        }
+//        if (pTaskDisposableObserver != null) {
+//            return;
+//        }
+        clearTaskTimer();
         pTaskDisposableObserver = Observable
                 .interval(1, TimeUnit.SECONDS)
                 .subscribeWith(new DisposableObserver<Long>() {
@@ -225,7 +227,7 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
                     public void onNext(Long aLong) {
                         int total = 0;
                         for (int i = 0; i < onTaskModuleCallBack.getTask().size(); i++) {
-                            if (onTaskModuleCallBack.getTask().get(i).isRunning()) {
+                            if (onTaskModuleCallBack.getTask().get(i).getTaskStatus() == TaskBean.TaskStatus.RUNNING) {
                                 total++;
                             }
 
@@ -234,27 +236,36 @@ public class ConfigBaseInfolModule extends BaseTabModule implements EventHandler
                             return;
                         }
 
+                        int taskCount = 0;
                         for (int i = 0; i < onTaskModuleCallBack.getTask().size(); i++) {
-                            if (!onTaskModuleCallBack.getTask().get(i).isRunning()) {
-                                onTaskModuleCallBack.getTask().get(i).setRunning(true);
+                            if (onTaskModuleCallBack.getTask().get(i).getTaskStatus() == TaskBean.TaskStatus.NORMAL) {
+                                if (taskCount >= AppConstant.P_RUNNING_TASK) {
+                                    break;
+                                }
+                                taskCount++;
+                                onTaskModuleCallBack.getTask().get(i).setTaskStatus(TaskBean.TaskStatus.RUNNING);
                                 String baseCommend = AppConstant.CHIA_PROGRAM_DIRECTORY + "\\" + AppConstant.CHIA_APP_VERSION_DIRECTORY_NAME + "\\resources\\app.asar.unpacked\\daemon\\";
                                 baseCommend += "chia plots create -k " + onTaskModuleCallBack.getTask().get(i).getType() + " -n 1 -t " + onTaskModuleCallBack.getTask().get(i).getCache() + " -d " + onTaskModuleCallBack.getTask().get(i).getTarget() + " -b " + onTaskModuleCallBack.getTask().get(i).getMemory() + " -r " + onTaskModuleCallBack.getTask().get(i).getThread() + " -u 128";
                                 String finalBaseCommend = baseCommend;
                                 int finalI = i;
-                                new Thread(){
-                                   @Override
-                                   public void run() {
-                                       super.run();
-                                       MichaelUtils.runByCMD(new OnCmdStringResponseCallBack() {
-                                           @Override
-                                           public void onResult(String currentLine, String full, int lineCount) {
-                                               onTaskModuleCallBack.getTask().get(finalI).setLog(full);
-                                               onTaskModuleCallBack.getTask().get(finalI).setProgress(ProgressHelper.getProgress(lineCount));
-                                           }
-                                       }, "cmd.exe", "/c", finalBaseCommend);
-                                   }
-                               }.start();
-                                total++;
+                                new Thread() {
+                                    @Override
+                                    public void run() {
+                                        super.run();
+                                        MichaelUtils.runByCMD(new OnCmdStringResponseCallBack() {
+                                            @Override
+                                            public void onResult(String currentLine, String full, int lineCount) {
+                                                onTaskModuleCallBack.getTask().get(finalI).setCurrentLineLog(currentLine);
+                                                onTaskModuleCallBack.getTask().get(finalI).setFullLog(full);
+                                                if (full.contains("Renamed final file from")) {
+                                                    onTaskModuleCallBack.getTask().get(finalI).setTaskStatus(TaskBean.TaskStatus.COMPLETE);
+                                                    onTaskModuleCallBack.getTask().get(finalI).setProgress(100);
+                                                }
+                                                onTaskModuleCallBack.getTask().get(finalI).setProgress(ProgressHelper.getProgress(lineCount));
+                                            }
+                                        }, "cmd.exe", "/c", finalBaseCommend);
+                                    }
+                                }.start();
                             }
                         }
 

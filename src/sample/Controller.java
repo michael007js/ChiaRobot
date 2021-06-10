@@ -48,6 +48,8 @@ public class Controller implements Initializable {
     @FXML
     public TextField textFieldSystemThreadValue;
     @FXML
+    public TextField textFieldSystemPoolWallet;
+    @FXML
     public Slider sliderSystemThreadChange;
     @FXML
     public TextField textFieldSystemFarmerPublicKey;
@@ -73,7 +75,6 @@ public class Controller implements Initializable {
     public Label labelDiskTargetSelect;
     @FXML
     public Label labelTaskSelect;
-
     @FXML
     public Button buttonDiskAddToTaskQueue;
     @FXML

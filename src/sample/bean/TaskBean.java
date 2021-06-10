@@ -1,5 +1,6 @@
 package sample.bean;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -10,16 +11,31 @@ import sample.utils.TimeUtils;
 public class TaskBean {
 
     /**
-     * 是否运行中
+     * 最新一行日志
      */
-    private boolean isRunning;
-
-    private String log;
+    private String currentLineLog;
+    /**
+     * 完整日志
+     */
+    private String fullLog;
 
     /**
      * chia秘钥模型
      */
     private KeyBean keyBean;
+
+    private TaskStatus taskStatus;
+
+
+    /**
+     * 格式化是否运行中
+     */
+    private SimpleStringProperty formatRun = new SimpleStringProperty();
+
+    {
+        formatRun.set("队列");
+    }
+
 
     /**
      * 序号
@@ -63,7 +79,7 @@ public class TaskBean {
         time.addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                timeFormat.set(TimeUtils.getFormatHMS(newValue.longValue()));
+                timeFormat.set(TimeUtils.formatDayHourMinuteSecond(newValue.longValue(),true,""));
             }
         });
     }
@@ -97,12 +113,39 @@ public class TaskBean {
      */
     private SimpleStringProperty finger = new SimpleStringProperty();
 
-    public boolean isRunning() {
-        return isRunning;
+    public TaskStatus getTaskStatus() {
+        return taskStatus;
     }
 
-    public void setRunning(boolean running) {
-        isRunning = running;
+    public void setTaskStatus(TaskStatus taskStatus) {
+        this.taskStatus = taskStatus;
+        if (this.taskStatus==TaskStatus.NORMAL){
+            formatRun.set("队列");
+        }else  if (this.taskStatus==TaskStatus.RUNNING){
+            formatRun.set("运行");
+        }else  if (this.taskStatus==TaskStatus.COMPLETE){
+            formatRun.set("完成");
+        }
+    }
+
+    public String getFormatRun() {
+        return formatRun.get();
+    }
+
+    public SimpleStringProperty formatRunProperty() {
+        return formatRun;
+    }
+
+    public void setFormatRun(String formatRun) {
+        this.formatRun.set(formatRun);
+    }
+
+    public String getCurrentLineLog() {
+        return currentLineLog;
+    }
+
+    public void setCurrentLineLog(String currentLineLog) {
+        this.currentLineLog = currentLineLog;
     }
 
     public long getCreateTime() {
@@ -258,11 +301,29 @@ public class TaskBean {
         setFinger(keyBean.getFingerprint());
     }
 
-    public String getLog() {
-        return log;
+    public String getFullLog() {
+        return fullLog;
     }
 
-    public void setLog(String log) {
-        this.log = log;
+    public void setFullLog(String fullLog) {
+        this.fullLog = fullLog;
+    }
+
+    /**
+     * 任务状态枚举
+     */
+    public enum TaskStatus {
+        /**
+         * 通常未处理状态，处于队列中
+         */
+        NORMAL,
+        /**
+         * 运行状态
+         */
+        RUNNING,
+        /**
+         * 完成状态
+         */
+        COMPLETE
     }
 }

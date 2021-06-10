@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane fx:id="GridPaneRootParent" alignment="center" hgap="10" prefHeight="600.0" prefWidth="800.0" vgap="10" xmlns="http://javafx.com/javafx/8.0.181" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<GridPane fx:id="GridPaneRootParent" alignment="center" hgap="10" prefHeight="600.0" prefWidth="850.0" vgap="10" xmlns="http://javafx.com/javafx/8.0.181" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <columnConstraints>
         <ColumnConstraints />
     </columnConstraints>
@@ -27,14 +27,14 @@
     <children>
         <AnchorPane minHeight="0.0" minWidth="0.0">
             <children>
-                <TabPane fx:id="tab_pane" layoutY="125.0" prefHeight="445.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE">
+                <TabPane fx:id="tab_pane" layoutY="125.0" prefHeight="445.0" prefWidth="850.0" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <Tab text="节点同步">
                             <content>
-                                <AnchorPane prefHeight="497.0" prefWidth="800.0">
+                                <AnchorPane prefHeight="497.0">
                                     <children>
                                         <Button fx:id="buttonNodeSyncByUser" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="开始同步" />
-                                        <TextArea fx:id="textAreaNodeLog" editable="false" layoutX="14.0" layoutY="49.0" prefHeight="364.0" prefWidth="775.0" promptText="同步日志" />
+                                        <TextArea fx:id="textAreaNodeLog" editable="false" layoutX="14.0" layoutY="49.0" prefHeight="364.0" prefWidth="820.0" promptText="同步日志" />
                                         <CheckBox fx:id="checkBoxNodeSyncByAuto" layoutX="97.0" layoutY="18.0" mnemonicParsing="false" text="自动同步" />
                               <CheckBox fx:id="checkBoxNodeSyncForChina" layoutX="184.0" layoutY="18.0" mnemonicParsing="false" selected="true" text="只同步国内节点" />
                                     </children></AnchorPane>
@@ -42,7 +42,7 @@
                         </Tab>
                         <Tab text="Chia系统配置">
                             <content>
-                                <AnchorPane prefHeight="497.0" prefWidth="800.0">
+                                <AnchorPane prefHeight="497.0" prefWidth="850.0">
                                     <children>
                                         <Label fx:id="labelSystemMemoryTotal" layoutX="14.0" layoutY="14.0" text="总共安装内存:0" />
                                         <Label fx:id="labelSystemMemoryCurrent" layoutX="14.0" layoutY="37.0" text="当前可用内存:0" />
@@ -59,12 +59,14 @@
                                         <TextField fx:id="textFieldSystemPoolPublicKey" editable="false" layoutX="84.0" layoutY="227.0" prefHeight="23.0" prefWidth="360.0" />
                                         <ChoiceBox fx:id="choiceBoxSystemKey" layoutX="14.0" layoutY="148.0" prefWidth="150.0" />
                                         <ChoiceBox fx:id="choiceBoxSystemPType" layoutX="180.0" layoutY="148.0" prefHeight="23.0" prefWidth="261.0" />
+                              <Label layoutX="14.0" layoutY="268.0" text="钱包    地址" />
+                              <TextField fx:id="textFieldSystemPoolWallet" layoutX="84.0" layoutY="264.0" prefHeight="23.0" prefWidth="360.0" />
                                     </children></AnchorPane>
                             </content>
                         </Tab>
                         <Tab text="磁盘配置">
                             <content>
-                                <AnchorPane prefHeight="497.0" prefWidth="800.0">
+                                <AnchorPane prefHeight="497.0" prefWidth="850.0">
                                     <children>
                                         <ListView fx:id="listViewDiskDirectoryCache" layoutX="14.0" layoutY="52.0" prefHeight="350.0" prefWidth="306.0" />
                                         <Label layoutX="14.0" layoutY="27.0" text="缓存目录" />
@@ -82,23 +84,24 @@
 
                         <Tab text="任务队列">
                             <content>
-                                <AnchorPane prefHeight="497.0" prefWidth="800.0">
+                                <AnchorPane prefHeight="497.0" prefWidth="850.0">
                                     <children>
 
                                         <Label layoutX="14.0" layoutY="14.0" text="任务预览" />
-                                        <Label fx:id="labelTaskSelect" layoutX="71.0" layoutY="14.0" maxWidth="710.0" />
-                              <TableView fx:id="tableViewTaskQueue" layoutX="14.0" layoutY="36.0" prefHeight="371.0" prefWidth="773.0">
+                                        <Label fx:id="labelTaskSelect" layoutX="71.0" layoutY="14.0" maxWidth="760.0" />
+                              <TableView fx:id="tableViewTaskQueue" layoutX="14.0" layoutY="36.0" prefHeight="371.0" prefWidth="825.0">
                                 <columns>
                                     <TableColumn maxWidth="60.0" minWidth="50.0" prefWidth="-1.0" text="序号" />
+                                    <TableColumn maxWidth="60.0" minWidth="50.0" prefWidth="-1.0" text="状态" />
                                     <TableColumn maxWidth="150.0" minWidth="80.0" prefWidth="-1.0" text="公共指纹" />
                                   <TableColumn maxWidth="1000.0" minWidth="130.0" prefWidth="-1.0" text="缓存路径" />
                                     <TableColumn maxWidth="1000.0" minWidth="130.0" prefWidth="-1.0" text="目标路径" />
                                     <TableColumn maxWidth="50.0" minWidth="50.0" prefWidth="-1.0" text="类型" />
                                     <TableColumn maxWidth="50.0" minWidth="40.0" prefWidth="-1.0" text="线程" />
                                     <TableColumn maxWidth="60.0" minWidth="40.0" prefWidth="-1.0" text="内存" />
-                                    <TableColumn maxWidth="60.0" minWidth="35.0" prefWidth="-1.0" text="进度" />
+                                    <TableColumn maxWidth="60.0" minWidth="40.0" prefWidth="-1.0" text="进度" />
+                                    <TableColumn maxWidth="100.0" minWidth="100.0" prefWidth="-1.0" text="用时" />
                                     <TableColumn maxWidth="150.0" minWidth="130.0" prefWidth="-1.0" text="创建时间" />
-                                    <TableColumn maxWidth="100.0" minWidth="90.0" prefWidth="-1.0" text="用时" />
 
                                 </columns>
                               </TableView>
@@ -118,7 +121,7 @@
             <Button fx:id="buttonNormalChangeConfigFileDirectory" layoutX="357.0" layoutY="50.0" mnemonicParsing="false" text="更改目录" />
             <Label layoutX="14.0" layoutY="90.0" text="chia当前版本" />
             <TextField fx:id="textFieldNormalAppVersionDirectory" editable="false" layoutX="96.0" layoutY="86.0" prefHeight="23.0" prefWidth="125.0" promptText="app-1.0.0" />
-            <Button fx:id="buttonNormalStartPTask" layoutX="695.0" layoutY="14.0" mnemonicParsing="false" text="开始P盘" />
+            <Button fx:id="buttonNormalStartPTask" layoutX="776.0" layoutY="14.0" mnemonicParsing="false" text="开始P盘" />
             <Label layoutX="234.0" layoutY="90.0" text="并发任务数" />
             <TextField fx:id="textFieldNormalRunningTask" layoutX="306.0" layoutY="86.0" prefHeight="23.0" prefWidth="51.0" promptText="1" text="1" />
             </children></AnchorPane>

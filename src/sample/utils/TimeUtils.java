@@ -305,13 +305,26 @@ public class TimeUtils {
     /**
      * 解析成天-小时-分-秒
      *
-     * @param millions
+     * @param ms         毫秒
+     * @param completion 是否补全（0：0：0==>00：00：00）
+     * @param daySuffix  天后缀
      * @return
      */
-    public static String formatDayHourMinuteSecond(long ms) {
-        if (ms < 1) {
-            return "0天0小时0分0秒";
-        }
+    public static String formatDayHourMinuteSecond(long ms, boolean completion, String daySuffix) {
+        return formatDayHourMinuteSecond(ms, completion, daySuffix, "时", "分", "秒");
+    }
+
+    /**
+     * @param ms           毫秒
+     * @param completion   是否补全（0：0：0==>00：00：00）
+     * @param daySuffix    天后缀
+     * @param hourSuffix   小时后缀
+     * @param minuteSuffix 分后缀
+     * @param secondSuffix 秒后缀
+     * @return
+     */
+    public static String formatDayHourMinuteSecond(long ms, boolean completion, String daySuffix, String hourSuffix, String minuteSuffix, String secondSuffix) {
+        StringBuilder stringBuilder = new StringBuilder();
         int ss = 1000;
         int mi = ss * 60;
         int hh = mi * 60;
@@ -321,7 +334,23 @@ public class TimeUtils {
         long hour = (ms - day * dd) / hh;
         long minute = (ms - day * dd - hour * hh) / mi;
         long second = (ms - day * dd - hour * hh - minute * mi) / ss;
-        return day + "天" + hour + "小时" + minute + "分" + second + "秒";
+        if (!StringUtils.isEmpty(daySuffix)) {
+            stringBuilder.append(completionZero(completion, day) + daySuffix);
+        }
+        if (!StringUtils.isEmpty(hourSuffix)) {
+            stringBuilder.append(completionZero(completion, hour) + hourSuffix);
+        }
+        if (!StringUtils.isEmpty(minuteSuffix)) {
+            stringBuilder.append(completionZero(completion, minute) + minuteSuffix);
+        }
+        if (!StringUtils.isEmpty(secondSuffix)) {
+            stringBuilder.append(completionZero(completion, second) + secondSuffix);
+        }
+        return stringBuilder.toString();
+    }
+
+    private static String completionZero(boolean completion, long l) {
+        return completion ? (l < 10 ? "0" + l : l + "") : l + "";
     }
 
 
@@ -1966,208 +1995,5 @@ public class TimeUtils {
             }
         }
         return sb.toString();
-    }
-
-
-    /*********************************************************************************************/
-
-    public static String initTime(String time) {
-        try {
-            String[] str = time.split("T");
-            if (str.length < 2) {
-                str = time.split(" ");
-            }
-            String str1 = str[0];
-            String str2 = str[1].split("\\.")[0];
-            return str1 + "\n" + str2;
-        } catch (Exception e) {
-            return time;
-        }
-    }
-
-    public static long toTime(String string) {
-        long time = 0;
-        Calendar c = Calendar.getInstance();
-        try {
-            c.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(string));
-            time = c.getTimeInMillis();
-        } catch (Exception e) {
-            time = 0;
-        }
-        return time;
-    }
-
-    public static String toYYYYMMDD(long time) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date curDate = new Date(time);//获取当前时间
-        return formatter.format(curDate);
-    }
-
-    public static int toYYYY(long time) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy");
-        SimpleDateFormat formatter1 = new SimpleDateFormat("MM");
-        Date curDate = new Date(time);//获取当前时间
-        if (Integer.parseInt(formatter1.format(curDate)) > 8) {
-            return Integer.parseInt(formatter.format(curDate)) + 1;
-        } else {
-            return Integer.parseInt(formatter.format(curDate));
-        }
-
-    }
-
-    public static String toMMDD(String string) {
-        long time = 0;
-        Calendar c = Calendar.getInstance();
-        try {
-            c.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(string));
-            time = c.getTimeInMillis();
-        } catch (Exception e) {
-            time = 0;
-        }
-        SimpleDateFormat formatter = new SimpleDateFormat("MM月dd日");
-        Date curDate = new Date(time);//获取当前时间
-        String str = formatter.format(curDate);
-        return str;
-    }
-
-    public static String toHHmm(String string) {
-        long time = 0;
-        Calendar c = Calendar.getInstance();
-        try {
-            c.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(string));
-            time = c.getTimeInMillis();
-        } catch (Exception e) {
-            time = 0;
-        }
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-        Date curDate = new Date(time);//获取当前时间
-        String str = formatter.format(curDate);
-        return str;
-    }
-
-    /**
-     * 根据毫秒返回时分秒
-     */
-    public static String toMsecHMS(long originalTime) {
-        originalTime = originalTime / 1000;//总秒数
-        int s = (int) (originalTime % 60);//秒
-        int m = (int) (originalTime / 60);//分
-        int h = (int) (originalTime / 3600);//时
-        if (h == 0) {
-            if (m == 0) {
-                if (s < 10) {
-                    return "00:0" + s;
-                } else {
-                    return "00:" + s;
-                }
-            } else {
-                if (m < 10) {
-                    if (s < 10) {
-                        return "0" + m + ":0" + s;
-                    } else {
-                        return "0" + m + ":" + s;
-                    }
-                } else {
-                    if (s < 10) {
-                        return m + ":0" + s;
-                    } else {
-                        return m + ":" + s;
-                    }
-                }
-            }
-        } else {
-            if (h < 10) {
-                if (m < 10) {
-                    if (s < 10) {
-                        return "0" + h + ":" + "0" + m + ":0" + s;
-                    } else {
-                        return "0" + h + ":" + "0" + m + ":" + s;
-                    }
-                } else {
-                    if (s < 10) {
-                        return "0" + h + ":" + m + ":0" + s;
-                    } else {
-                        return "0" + h + ":" + m + ":" + s;
-                    }
-                }
-            } else {
-                if (m < 10) {
-                    if (s < 10) {
-                        return h + ":" + "0" + m + ":0" + s;
-                    } else {
-                        return h + ":" + "0" + m + ":" + s;
-                    }
-                } else {
-                    if (s < 10) {
-                        return h + ":" + m + ":0" + s;
-                    } else {
-                        return h + ":" + m + ":" + s;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 根据毫秒返回时分秒
-     */
-    public static String getFormatHMS(long originalTime) {
-        originalTime = originalTime / 1000;//总秒数
-        int s = (int) (originalTime % 60);//秒
-        int m = (int) (originalTime / 60);//分
-        int h = (int) (originalTime / 3600);//时
-        if (h == 0) {
-            if (m == 0) {
-                if (s < 10) {
-                    return "00分0" + s + "秒";
-                } else {
-                    return "00分" + s + "秒";
-                }
-            } else {
-                if (m < 10) {
-                    if (s < 10) {
-                        return "0" + m + "分0" + s + "秒";
-                    } else {
-                        return "0" + m + "分" + s + "秒";
-                    }
-                } else {
-                    if (s < 10) {
-                        return m + "分0" + s + "秒";
-                    } else {
-                        return m + "分" + s + "秒";
-                    }
-                }
-            }
-        } else {
-            if (h < 10) {
-                if (m < 10) {
-                    if (s < 10) {
-                        return "0" + h + "小时" + "0" + m + "分0" + s + "秒";
-                    } else {
-                        return "0" + h + "小时" + "0" + m + "分" + s + "秒";
-                    }
-                } else {
-                    if (s < 10) {
-                        return "0" + h + "小时" + m + "分0" + s + "秒";
-                    } else {
-                        return "0" + h + "小时" + m + "分" + s + "秒";
-                    }
-                }
-            } else {
-                if (m < 10) {
-                    if (s < 10) {
-                        return h + "小时" + "0" + m + "分0" + s + "秒";
-                    } else {
-                        return h + "小时" + "0" + m + "分" + s + "秒";
-                    }
-                } else {
-                    if (s < 10) {
-                        return h + "小时" + m + "分0" + s + "秒";
-                    } else {
-                        return h + "小时" + m + "分" + s + "秒";
-                    }
-                }
-            }
-        }
     }
 }

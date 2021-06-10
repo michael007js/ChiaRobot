@@ -70,6 +70,7 @@ public class TabSystemModule extends BaseTabModule {
             AppConstant.chiaPTypeBean = null;
             UIUtils.setText(controller.textFieldSystemFarmerPublicKey, "");
             UIUtils.setText(controller.textFieldSystemPoolPublicKey, "");
+            UIUtils.setText(controller.textFieldSystemPoolWallet, "");
             UIUtils.setData(keyAdapter, controller.choiceBoxSystemKey, new ArrayList<>());
         }
 
@@ -136,6 +137,7 @@ public class TabSystemModule extends BaseTabModule {
             public void onItemClick(KeyBean item) {
                 UIUtils.setText(controller.textFieldSystemFarmerPublicKey, item.getFarmerPublicKey());
                 UIUtils.setText(controller.textFieldSystemPoolPublicKey, item.getPoolPublicKey());
+                UIUtils.setText(controller.textFieldSystemPoolWallet, item.getFirstWalletAddress());
                 AppConstant.keyBean = item;
             }
         });
